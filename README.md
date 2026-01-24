@@ -1,13 +1,14 @@
 # Zyron Proxy
 
-Zyron Proxy is a lightweight, self-hosted web proxy built on the Scramjet ecosystem. It provides a fast, modular, and minimal proxy setup with all necessary components included.
+Zyron Proxy is a lightweight, self-hosted web proxy built on the Scramjet ecosystem.  
+It provides a fast, modular, and minimal proxy setup with all required components included.
 
 ## Features
 
 - Fast Scramjet-based proxy  
 - Modular architecture with swappable components  
-- Batteries-included setup with minimal configuration  
-- Minimal HTML frontend  
+- Minimal setup, ready to use  
+- Lightweight HTML frontend  
 - Customizable transport, service worker, and Wisp  
 
 ## Included Components
@@ -20,8 +21,8 @@ Zyron Proxy is a lightweight, self-hosted web proxy built on the Scramjet ecosys
 
 ## Hosting
 
-Zyron Proxy can be hosted on Netlify and similar static hosting providers.  
-Only Netlify has been fully tested; other hosting platforms may work but have not been verified.
+Zyron can be hosted on Netlify, Vercel, Cloudflare Pages, or similar static hosting platforms.  
+All three have been tested and work.
 
 ### Example Deployment
 
