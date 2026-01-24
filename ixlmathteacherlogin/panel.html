@@ -158,11 +158,15 @@
     </div>
     <iframe src="" frameborder="0" id="frame"></iframe>
     <script>
-        // auto redirect to about:blank
-        if (window.location.href != 'about:blank') {
-            var page = window.open('about:blank', '_blank');
-            page.document.write('<iframe src="' + window.location.href + '" style="position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden;"></iframe>');
-            window.close();
+        // open in about:blank to hide it
+        var inBlank = sessionStorage.getItem('inBlank');
+        if (!inBlank) {
+            sessionStorage.setItem('inBlank', 'true');
+            var win = window.open();
+            var html = document.documentElement.outerHTML;
+            win.document.write(html);
+            win.document.close();
+            window.location.href = 'about:blank';
         }
         
         var connection = new BareMux.BareMuxConnection("/ixlmath/baremux/worker.js")
