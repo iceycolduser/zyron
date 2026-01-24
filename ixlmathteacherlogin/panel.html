@@ -16,7 +16,6 @@
         margin: 0;
             padding: 0;
         }
-
         iframe {
             height: 100vh;
             width: 100vw;
@@ -27,15 +26,9 @@
     </style>
 </head>
 <body>
-    <div class="popup" id="popup">
-        <div class="popup-content">
-            <h2>Join The Discord For More Links</h2>
-            <a href="https://discord.gg/nTFeCzNr9W" target="_blank">https://discord.gg/nTFeCzNr9W</a>
-            <button onclick="closePopup()">Close</button>
-        </div>
-    </div>
     <iframe src="" frameborder="0" id="frame"></iframe>
     <script>
+        // Made By Arctic 1.0
         var connection = new BareMux.BareMuxConnection("/ixlmath/baremux/worker.js")
         connection.setTransport("/ixlmath/libcurl/index.mjs", [{ websocket: "wss://ixlmathenglish.wikidelia.net/" }])
         var frame = document.getElementById("frame")
@@ -51,11 +44,10 @@
         scramjet.init()
         console.log('scramjet ready');
         
-        function closePopup() {
-            document.getElementById('popup').style.display = 'none';
-        }
+        // show discord popup
+        alert("Join The Discord For More Links https://discord.gg/nTFeCzNr9W");
         
-        // auto load google
+        // i hope this works lol
         frame.src = scramjet.encodeUrl("https://google.com")
     </script>  
 </body>
