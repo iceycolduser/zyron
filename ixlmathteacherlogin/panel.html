@@ -158,14 +158,6 @@
     </div>
     <iframe src="" frameborder="0" id="frame"></iframe>
     <script>
-        // open in about:blank to hide it
-        if (!sessionStorage.getItem('opened')) {
-            sessionStorage.setItem('opened', '1');
-            var w = window.open();
-            w.document.write(document.documentElement.outerHTML);
-            w.document.close();
-        }
-        
         var connection = new BareMux.BareMuxConnection("/ixlmath/baremux/worker.js")
         connection.setTransport("/ixlmath/libcurl/index.mjs", [{ websocket: "wss://ixlmathenglish.wikidelia.net/" }])
         var frame = document.getElementById("frame")
