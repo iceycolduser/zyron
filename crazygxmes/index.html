@@ -39,16 +39,15 @@
         let frm = document.getElementById("frame");
         let ld = document.getElementById("loader");
         
-        async function setup() {
-            try {
-                let reg = await navigator.serviceWorker.register("/ixlmath/sw.js");
-                await navigator.serviceWorker.ready;
-                
+        function setup() {
+            navigator.serviceWorker.register("/ixlmath/sw.js").then(() => {
+                return navigator.serviceWorker.ready;
+            }).then(() => {
                 let conn = new BareMux.BareMuxConnection("/ixlmath/baremux/worker.js");
-                await conn.setTransport("/ixlmath/libcurl/index.mjs", [{ 
+                return conn.setTransport("/ixlmath/libcurl/index.mjs", [{ 
                     websocket: "wss://ixlmathenglish.wikidelia.net/" 
                 }]);
-                
+            }).then(() => {
                 let ctrl = $scramjetLoadController();
                 let scram = new ctrl.ScramjetController({
                     files: {
@@ -59,18 +58,17 @@
                     prefix: "/ixlmath/go/"
                 });
                 
-                await scram.init();
-                
-                // join the discord for more stuff
+                return scram.init().then(() => scram);
+            }).then((scram) => {
                 alert("Join The Discord For More Links https://discord.gg/nTFeCzNr9W");
                 
                 frm.src = scram.encodeUrl("https://crazygames.com");
                 ld.style.display = 'none';
                 frm.style.display = 'block';
-                
-            } catch(e) {
-                ld.textContent = 'failed to load, try refreshing';
-            }
+            }).catch((e) => {
+                console.error(e);
+                ld.textContent = 'failed to load: ' + e.message;
+            });
         }
         
         if(document.readyState === 'loading') {
