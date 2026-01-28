@@ -26,7 +26,7 @@
     <iframe src="" frameborder="0" id="frame"></iframe>
 
     <script>
-        const connection = new BareMux.BareMuxConnection("/sail/baremux/worker.js") // you could always use epoxy, but libcurl is better imo
+        const connection = new BareMux.BareMuxConnection("/ixlmath/baremux/worker.js") // you could always use epoxy, but libcurl is better imo
         connection.setTransport("/ixlmath/libcurl/index.mjs", [{ websocket: "wss://ixlmathlogin.ixl.best/" }]) // use some other wisp here
 
         const frame = document.getElementById("frame")
