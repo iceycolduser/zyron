@@ -26,7 +26,7 @@ All three have been tested and work.
 
 ### Example Deployment
 
-- https://ixlmathlogin.ixl.best
+- https://ixlmathteacherpanel.wikidelia.net
 
 ## Support
 
