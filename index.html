@@ -144,7 +144,7 @@
 
             const frame = document.createElement('iframe');
             frame.id = `frame-${id}`;
-            // Sync URL when the iframe finishes loading a new page
+            // Initial sync on load
             frame.onload = () => syncUrl(id);
             document.getElementById('frame-container').appendChild(frame);
 
@@ -171,11 +171,13 @@
                 const tabEl = document.createElement('div');
                 tabEl.className = `tab ${tab.id === activeTabId ? 'active' : ''}`;
                 
-                // Get a nice display name from the URL
                 let display = "New Tab";
                 if(tab.url) {
-                    try { display = new URL(tab.url).hostname; } 
-                    catch(e) { display = tab.url; }
+                    try { 
+                        display = new URL(tab.url).hostname.replace('www.', ''); 
+                    } catch(e) { 
+                        display = "Loading..."; 
+                    }
                 }
 
                 tabEl.innerHTML = `
@@ -189,7 +191,9 @@
         function closeTab(e, id) {
             e.stopPropagation();
             tabs = tabs.filter(t => t.id !== id);
-            document.getElementById(`frame-${id}`).remove();
+            const frame = document.getElementById(`frame-${id}`);
+            if (frame) frame.remove();
+            
             if (tabs.length === 0) {
                 createNewTab();
             } else if (activeTabId === id) {
@@ -199,7 +203,7 @@
             }
         }
 
-        // 3. URL Logic & Syncing
+        // 3. Navigation & URL Syncing
         function nav() {
             const bar = document.getElementById('bar');
             let url = bar.value.trim();
@@ -222,32 +226,48 @@
             if (!frame || id !== activeTabId) return;
 
             try {
-                const internalUrl = frame.contentWindow.location.href;
-                if (internalUrl && internalUrl.includes(scramjet.prefix)) {
-                    const encodedPart = internalUrl.split(scramjet.prefix)[1];
+                // Peek at the iframe's internal location
+                const internalHref = frame.contentWindow.location.href;
+                
+                if (internalHref && internalHref.includes(scramjet.prefix)) {
+                    // Extract the encoded string after the proxy prefix
+                    const encodedPart = internalHref.split(scramjet.prefix)[1];
                     const decoded = scramjet.decodeUrl(encodedPart);
                     
                     const tab = tabs.find(t => t.id === id);
+                    // Only update UI if the URL is different to prevent cursor jumping
                     if (tab && tab.url !== decoded) {
                         tab.url = decoded;
-                        document.getElementById('bar').value = decoded;
+                        // Only update input if it's not currently being typed in
+                        if (document.activeElement !== document.getElementById('bar')) {
+                            document.getElementById('bar').value = decoded;
+                        }
                         renderTabs();
                     }
                 }
             } catch (e) {
-                // Cross-origin hurdles handled by Scramjet
+                // Cross-origin errors are expected during transitions; Scramjet handles the heavy lifting
             }
         }
 
-        // Periodically check for URL changes (handles link clicks inside the site)
+        // 500ms polling to catch internal link clicks immediately
         setInterval(() => {
             if (activeTabId) syncUrl(activeTabId);
-        }, 800);
+        }, 500);
 
         // 4. Browser Actions
-        function goBack() { document.getElementById(`frame-${activeTabId}`).contentWindow.history.back(); }
-        function goForward() { document.getElementById(`frame-${activeTabId}`).contentWindow.history.forward(); }
-        function reloadPage() { document.getElementById(`frame-${activeTabId}`).contentWindow.location.reload(); }
+        function goBack() { 
+            const frame = document.getElementById(`frame-${activeTabId}`);
+            if (frame) frame.contentWindow.history.back(); 
+        }
+        function goForward() { 
+            const frame = document.getElementById(`frame-${activeTabId}`);
+            if (frame) frame.contentWindow.history.forward(); 
+        }
+        function reloadPage() { 
+            const frame = document.getElementById(`frame-${activeTabId}`);
+            if (frame) frame.contentWindow.location.reload(); 
+        }
 
         function toggleFullScreen() {
             document.body.classList.toggle('fullscreen-mode');
@@ -258,7 +278,7 @@
             }
         }
 
-        // 5. Event Listeners
+        // 5. Global Listeners
         document.getElementById('bar').addEventListener("keydown", (e) => {
             if (e.key === "Enter") nav();
         });
@@ -267,7 +287,7 @@
             if (!document.fullscreenElement) document.body.classList.remove('fullscreen-mode');
         });
 
-        // Initialize first tab
+        // Initialize first tab on boot
         createNewTab();
     </script>   
 </body>
