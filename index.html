@@ -3,998 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zyron</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+    <title>IXL Math - Scramjet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="/ixlmath/baremux/index.js"></script>
+    <script src="/ixlmath/scram/scramjet.all.js"></script>
+    <script>
+        navigator.serviceWorker.register("/ixlmath/sw.js")
+    </script>
     <style>
-        * {
+        :root {
+            --bg-color: #0f172a;
+            --nav-bg: #1e293b;
+            --accent: #38bdf8;
+            --text: #f8fafc;
+            --input-bg: #334155;
+        }
+
+        body, html {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: #000;
-            color: #fff;
-            font-family: 'DM Sans', sans-serif;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* bg animation - took forever to get this looking right */
-        .bgGrad {
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
-            pointer-events: none;
-        }
-
-        .gridOverlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
             height: 100%;
-            background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-            background-size: 50px 50px;
-            pointer-events: none;
-            opacity: 0.5;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            overflow: hidden;
+            color: var(--text);
         }
 
-        .wrapper {
-            text-align: center;
-            width: 100%;
-            max-width: 650px;
-            padding: 40px;
-            position: relative;
+        .navbar {
+            display: flex;
+            align-items: center;
+            height: 60px;
+            background-color: var(--nav-bg);
+            padding: 0 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             z-index: 10;
-            opacity: 1;
-        }
-
-        .titleWrap {
-            margin-bottom: 3rem;
             position: relative;
         }
 
-        h1 {
-            font-size: 4rem;
-            font-weight: 700;
-            letter-spacing: -2px;
-            background: linear-gradient(90deg, #ffffff 0%, #a0a0a0 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-        }
-
-        .subtext {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.9rem;
-            color: #888;
-            letter-spacing: 3px;
+        .logo {
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-right: 25px;
+            letter-spacing: 1px;
+            color: var(--accent);
             text-transform: uppercase;
         }
 
-        .inputWrap {
-            position: relative;
-            margin-bottom: 1.5rem;
+        .search-container {
+            flex-grow: 1;
+            display: flex;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--input-bg);
+            border-radius: 12px;
+            padding: 5px;
+            border: 1px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .glassBox {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 8px;
-            transition: all 0.35s ease;
+        .search-container:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
         }
 
-        .glassBox:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        #urlBox {
-            width: 100%;
-            padding: 22px 28px;
-            font-size: 1.2rem;
-            font-family: 'DM Sans', sans-serif;
+        input#bar {
+            flex-grow: 1;
             background: transparent;
-            color: #fff;
             border: none;
-            border-radius: 16px;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
             outline: none;
         }
 
-        #urlBox::placeholder {
-            color: #555;
-        }
-
-        .searchIco {
-            position: absolute;
-            right: 24px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            opacity: 0.4;
-            pointer-events: none;
-        }
-
-        .searchBtn {
-            padding: 18px 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            font-family: 'DM Sans', sans-serif;
-            background: #fff;
-            color: #000;
+        button#go-btn {
+            background: var(--accent);
+            color: #0f172a;
             border: none;
-            border-radius: 16px;
+            padding: 0 22px;
+            border-radius: 8px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            position: relative;
-            overflow: hidden;
+            transition: transform 0.1s;
         }
 
-        .searchBtn::before {
-            content: '';
+        button#go-btn:active {
+            transform: scale(0.95);
+        }
+
+        .frame-wrapper {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.1);
-            transform: translate(-50%, -50%);
-            transition: width 0.5s, height 0.5s;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #000;
         }
 
-        .searchBtn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .searchBtn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 35px rgba(255, 255, 255, 0.15);
-        }
-
-        .searchBtn:active {
-            transform: translateY(-1px);
-        }
-
-        .btmText {
-            margin-top: 3rem;
-            font-size: 0.85rem;
-            color: #666;
-            letter-spacing: 0.5px;
-        }
-
-        .divLine {
-            width: 60px;
-            height: 2px;
-            background: linear-gradient(90deg, #ffffff 0%, #a0a0a0 100%);
-            margin: 2rem auto;
-        }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            .wrapper { padding: 20px; }
-            #urlBox { font-size: 1rem; padding: 18px 24px; }
-            .searchBtn { padding: 16px 40px; }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #ffffff;
         }
     </style>
 </head>
 <body>
-    <div class="bgGrad"></div>
-    <div class="gridOverlay"></div>
 
-    <div class="wrapper">
-        <div class="titleWrap">
-            <h1>Zyron</h1>
-            <div class="divLine"></div>
-            <p class="subtext">For All The Mfs With A 0.004 GPA</p>
+    <nav class="navbar">
+        <div class="logo">IXL MATH</div>
+        <div class="search-container">
+            <input type="text" placeholder="Enter URL or search term..." id="bar" autocomplete="off">
+            <button onclick="nav()" id="go-btn">Go</button>
         </div>
-        
-        <form id="searchForm">
-            <div class="inputWrap glassBox">
-                <input 
-                    type="text" 
-                    id="urlBox" 
-                    placeholder="Enter A Website You Want To Go To" 
-                    autocomplete="off"
-                    required
-                >
-                <svg class="searchIco" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                </svg>
-            </div>
-            <button type="submit" class="searchBtn">Search</button>
-        </form>
-        
-        <p class="btmText">Made By Arctic 1.0</p>
+    </nav>
+
+    <div class="frame-wrapper">
+        <iframe src="about:blank" id="frame"></iframe>
     </div>
 
     <script>
-        var form = document.getElementById('searchForm');
-        var input = document.getElementById('urlBox');
+        // Updated connection paths to /ixlmath
+        const connection = new BareMux.BareMuxConnection("/ixlmath/baremux/worker.js")
+        connection.setTransport("/ixlmath/libcurl/index.mjs", [{ websocket: "wss://wisp.rhw.one/" }])
 
-        // blocklist of sites
-        var blockedSites = [
-            // Adult content sites - Tube sites
-            'pornhub.com',
-            'xvideos.com',
-            'xnxx.com',
-            'xhamster.com',
-            'redtube.com',
-            'tube8.com',
-            'youporn.com',
-            'spankbang.com',
-            'txxx.com',
-            'porn.com',
-            'beeg.com',
-            'hqporner.com',
-            'porntrex.com',
-            'eporner.com',
-            'gotporn.com',
-            'tnaflix.com',
-            'drtuber.com',
-            'pornone.com',
-            'thumbzilla.com',
-            'vporn.com',
-            'porngo.com',
-            'sexvid.xxx',
-            'porndig.com',
-            'hdzog.com',
-            'pornhat.com',
-            'ah-me.com',
-            'slutload.com',
-            'sunporno.com',
-            'pornerbros.com',
-            'definebabe.com',
-            'fapality.com',
-            'pornky.com',
-            'pornktube.com',
-            'upornia.com',
-            'alphaporno.com',
-            'nuvid.com',
-            'empflix.com',
-            'flyflv.com',
-            'pornoxo.com',
-            'pornmz.com',
-            'pornsharing.com',
-            'hardporno.tube',
-            'freeomovie.info',
-            'pornl.com',
-            'streamporn.li',
-            'pinkworld.com',
-            'finevids.xxx',
-            'anysex.com',
-            'fux.com',
-            'freeporn.com',
-            'befuck.com',
-            'hotmovs.com',
-            'ok.xxx',
-            'porndr.com',
-            'manysex.com',
-            'tubegalore.com',
-            'porn300.com',
-            'pornrox.com',
-            'pornwhite.com',
-            'tubepornclassic.com',
-            'vjav.com',
-            'porn555.com',
-            'pornid.xxx',
-            'porntop.com',
-            'tubewolf.com',
-            'hdpornfree.xxx',
-            'fucktube.com',
-            'porndroids.com',
-            'analdin.com',
-            'porndoe.com',
-            'proporn.com',
-            'xtits.com',
-            'pornheed.com',
-            'pornhitz.com',
-            'pornomovies.com',
-            'pornsos.com',
-            'sex.com',
-            'extremetube.com',
-            'keezmovies.com',
-            'pornzog.com',
-            'tubxporn.com',
-            'youjizz.com',
-            'cliphunter.com',
-            'moviefap.com',
-            'jizzbunker.com',
-            'madthumbs.com',
-            'alohatube.com',
-            'wankoz.com',
-            'iceporn.com',
-            'h2porn.com',
-            'freudbox.com',
-            'freeporntube.xxx',
-            'pornoid.com',
-            'xfantasy.tv',
-            'pornpros.com',
-            'porndune.com',
-            'pornmaki.com',
-            'xxvideoss.org',
-            'bravoporn.com',
-            'lubetube.com',
-            'sexu.com',
-            'pandamovies.com',
-            'porcore.com',
-            'porn4days.com',
-            'pornstep.com',
-            'fapvid.com',
-            'porn720.com',
-            'xxxbunker.com',
-            'videosexarchive.com',
-            'pichunter.com',
-            'xogogo.com',
-            'pornwatchers.com',
-            'javynow.com',
-            'justporno.tv',
-            'trendyporn.com',
-            'perfectgirls.net',
-            'pornhd.com',
-            'yespornplease.com',
-            'pornhub.org',
-            'fantasti.cc',
-            'desipapa.com',
-            'porntube.com',
-            'xxxymovies.com',
-            'justfullporn.com',
-            'hotporn.com',
-            'desiporn.tube',
-            'yourporn.sexy',
-            'xxxfiles.com',
-            'pornhost.com',
-            'porneq.com',
-            'pornjam.com',
-            'mofosex.com',
-            'spankwire.com',
-            'javfinder.is',
-            'porn4k.com',
-            'pornid.cc',
-            'alotporn.com',
-            'wetpussy.com',
-            'pornflip.com',
-            'porngem.com',
-            'hdporncomics.com',
-            'pornstars.com',
-            'ixxx.com',
-            '3movs.com',
-            '4tube.com',
-            '5porn.com',
-            'sexix.net',
-            'pornburst.xxx',
-            'fullporner.com',
-            'pornwex.tv',
-            'pornachi.com',
-            'hardporn.com',
-            'pornfaze.com',
-            'pornkino.to',
-            'sextubefun.com',
-            'videospornogratisx.com',
-            'xtapes.to',
-            'yourfreeporn.us',
-            'pornerbros.com',
-            'sextubeporn.info',
-            'xmoviesforyou.com',
-            'justporn.to',
-            'bustybloom.com',
-            'netfapx.com',
-            'joysporn.com',
-            
-            // Cam sites
-            'jerkmate.com',
-            'chaturbate.com',
-            'stripchat.com',
-            'camsoda.com',
-            'cam4.com',
-            'bongacams.com',
-            'myfreecams.com',
-            'livejasmin.com',
-            'flirt4free.com',
-            'streamate.com',
-            'imlive.com',
-            'cams.com',
-            'xlovecam.com',
-            'camcontacts.com',
-            'sakura.live',
-            'xcams.com',
-            'sexcamly.com',
-            'sexier.com',
-            'slutroulette.com',
-            'imlivesex.com',
-            'camdolls.com',
-            'sexchat.com',
-            'stripchat.com',
-            'royalcams.com',
-            'jasmin.com',
-            'cam2cam.com',
-            'naked.com',
-            'camster.com',
-            'cherrytvlive.com',
-            'rabbitscams.com',
-            'camonster.com',
-            'lj.net',
-            'shagle.com',
-            'dirtyroulette.com',
-            'chatrandom.com',
-            'flingster.com',
-            'bazoocam.org',
-            'camzap.com',
-            'camsurf.com',
-            'chatspin.com',
-            'emeraldchat.com',
-            'ometv.chat',
-            'tinychat.com',
-            'omegle.com',
-            'chatroulette.com',
-            'camwhores.tv',
-            'camwhores.video',
-            'recordbate.com',
-            'webcamrips.com',
-            'camvideos.me',
-            'voyeurhit.com',
-            'freecamvideos.org',
-            
-            // Premium adult sites
-            'brazzers.com',
-            'realitykings.com',
-            'bangbros.com',
-            'naughtyamerica.com',
-            'mofos.com',
-            'twistys.com',
-            'babes.com',
-            'fakehub.com',
-            'evilangel.com',
-            'kink.com',
-            'hustler.com',
-            'playboy.com',
-            'penthouse.com',
-            'vivid.com',
-            'digitalplayground.com',
-            'teamskeet.com',
-            'wicked.com',
-            'privatecasting-x.com',
-            'famedigital.com',
-            'adulttime.com',
-            'pornpros.com',
-            'passion-hd.com',
-            'tiny4k.com',
-            'povd.com',
-            'lubed.com',
-            'exotic4k.com',
-            'puremature.com',
-            'fantasyhd.com',
-            'cumfiesta.com',
-            'milfhunter.com',
-            'momsteachsex.com',
-            'mompov.com',
-            'anilos.com',
-            'deviante.com',
-            'familystrokes.com',
-            'daughterswap.com',
-            'sis.xxx',
-            'sislovesme.com',
-            'myfamilypies.com',
-            'bratty-sis.com',
-            'nubiles.net',
-            'nubile-films.com',
-            'petitehdporn.com',
-            'exxxtrasmall.com',
-            'teenslovehugecocks.com',
-            'innocenthigh.com',
-            'barely18.tv',
-            'teenpies.com',
-            'cumswappingsis.com',
-            'seduced.xxx',
-            'mylf.com',
-            'perv-mom.com',
-            'milfty.com',
-            'analized.com',
-            'tushy.com',
-            'tushyraw.com',
-            'blacked.com',
-            'blackedraw.com',
-            'vixen.com',
-            'vixenplus.com',
-            'deeper.com',
-            'slayed.com',
-            'metart.com',
-            'met-art.com',
-            'sexart.com',
-            'vivthomas.com',
-            'alsscan.com',
-            'watch4beauty.com',
-            'femjoy.com',
-            'thelifeerotic.com',
-            'girlsway.com',
-            'webyoung.com',
-            'mommysgirl.com',
-            'allgirlmassage.com',
-            'lesbianx.com',
-            'girlfriendsfilms.com',
-            'sweetheartvideo.com',
-            'nubilelesbian.com',
-            'dyked.com',
-            'hotandmean.com',
-            'lesbea.com',
-            'puretaboo.com',
-            'modernday-sins.com',
-            'anatomyofa-scene.com',
-            'burningangel.com',
-            'tslove.com',
-            'transsexual.com',
-            'transfixed.com',
-            'transangels.com',
-            'groobygirls.com',
-            'shemaleyum.com',
-            'shemale.xxx',
-            'ashemaletube.com',
-            'tsplayground.com',
-            'publicagent.com',
-            'fakehospital.com',
-            'faketaxi.com',
-            'czechcasting.com',
-            'czechav.com',
-            'czechstreets.com',
-            'czechhomeorgy.com',
-            'nubiles-porn.com',
-            'petite-ballerinas-fucked.com',
-            'tonightsgirlfriend.com',
-            'deeplush.com',
-            'eroticax.com',
-            'sweetsinners.com',
-            'newsensations.com',
-            '21naturals.com',
-            '21sextury.com',
-            '21sextreme.com',
-            'dpfanatics.com',
-            'assholefever.com',
-            'footsiebabes.com',
-            'lezcuties.com',
-            'teachmefisting.com',
-            'lezbianhoneys.com',
-            'allinternal.com',
-            'perfectgonzo.com',
-            'spermswap.com',
-            'asstraffic.com',
-            'primecups.com',
-            'glamour.cz',
-            'vipissy.com',
-            'wetandpissy.com',
-            'wetandpuffy.com',
-            'girlsoutwest.com',
-            'abbywinters.com',
-            'girlsdoporn.com',
-            
-            // Adult platforms/content creators
-            'onlyfans.com',
-            'fansly.com',
-            'manyvids.com',
-            'clips4sale.com',
-            'iwantclips.com',
-            'modelhub.com',
-            'pornhubpremium.com',
-            'justfor.fans',
-            'loyalfans.com',
-            'fancentro.com',
-            'admire.me',
-            'frisk.chat',
-            'apclips.com',
-            'bentbox.co',
-            'sexsells.com',
-            'sextpanther.com',
-            'niteflirt.com',
-            'erome.com',
-            'fansmetrics.com',
-            'unlockd.me',
-            'mym.fans',
-            'patreon.com',
-            'gumroad.com',
-            
-            // Image boards/forums
-            'motherless.com',
-            'imagefap.com',
-            'xhamsterpics.com',
-            '4chan.org',
-            '8kun.top',
-            'imagebam.com',
-            'pixhost.to',
-            'imgbox.com',
-            'postimg.cc',
-            'phun.org',
-            'socialmediagirls.com',
-            'thotsbay.com',
-            'thothub.tv',
-            'simpcity.su',
-            'coomer.party',
-            'kemono.party',
-            'f95zone.to',
-            'leakedmodels.com',
-            'fansleak.com',
-            'onlyfansleak.com',
-            
-            // Hentai/anime
-            'gelbooru.com',
-            'rule34.xxx',
-            'rule34.paheal.net',
-            'e-hentai.org',
-            'exhentai.org',
-            'hentai-foundry.com',
-            'nhentai.net',
-            'hentaihaven.org',
-            'tsumino.com',
-            'multporn.net',
-            'hdporncomics.com',
-            'danbooru.donmai.us',
-            'sankakucomplex.com',
-            'konachan.com',
-            'yande.re',
-            'safebooru.org',
-            'hypnohub.net',
-            'tbib.org',
-            'lolibooru.moe',
-            'allthefallen.moe',
-            'hitomi.la',
-            'pururin.io',
-            '8muses.com',
-            'hentai2read.com',
-            'doujins.com',
-            'simply-hentai.com',
-            'hentaifox.com',
-            'hentaihand.com',
-            'hentaihere.com',
-            'hentaigasm.com',
-            'hanime.tv',
-            'hentaistream.com',
-            'hentaidude.com',
-            'muchohentai.com',
-            '3dhentai.tube',
-            'hentai.xxx',
-            'hentaipulse.com',
-            'anime-sharing.com',
-            'sukebei.nyaa.si',
-            
-            // Dating sites
-            'tinder.com',
-            'bumble.com',
-            'hinge.co',
-            'match.com',
-            'eharmony.com',
-            'okcupid.com',
-            'pof.com',
-            'zoosk.com',
-            'christianmingle.com',
-            'jdate.com',
-            'blackpeoplemeet.com',
-            'ourtime.com',
-            'silversingles.com',
-            'elitesingles.com',
-            'coffeeemeetsbagel.com',
-            'happn.com',
-            'her.com',
-            'grindr.com',
-            'scruff.com',
-            'chappy.com',
-            'feeld.co',
-            'badoo.com',
-            'plenty-of-fish.com',
-            'meetme.com',
-            'skout.com',
-            'tagged.com',
-            'twoo.com',
-            'lovoo.com',
-            'meetic.com',
-            'parship.com',
-            'be2.com',
-            'spark.com',
-            'matchaffinity.com',
-            'datebritishguys.com',
-            'uniform-dating.com',
-            'farmersonly.com',
-            'muzmatch.com',
-            'minder.com',
-            'chispa.com',
-            'hotornot.com',
-            'adultfriendfinder.com',
-            'ashleymadison.com',
-            'seeking.com',
-            'secretbenefits.com',
-            'sugardaddy.com',
-            'whatsyourprice.com',
-            'benaughty.com',
-            'flirt.com',
-            'fling.com',
-            'casualx.com',
-            'pure.app',
-            'down.com',
-            'jaumo.com',
-            'hily.com',
-            'clover.co',
-            'thursday.dating',
-            'raya.co',
-            'luxy.com',
-            'theinnercircle.co',
-            'theleague.com',
-            'ship.app',
-            'lex.app',
-            'howaboutwe.com',
-            'hater.com',
-            'pickable.com',
-            'innercirlce.co',
-            'bristlr.com',
-            'datemyschool.com',
-            'onenightfriend.com',
-            'meetmindful.com',
-            'wapa.app',
-            'scissr.com',
-            'thisisit.com',
-            'cuddli.com',
-            'geek2geek.com',
-            'trekpassions.com',
-            'soulgeek.com',
-            'nerddating.com',
-            
-            // Drug/substance sites
-            'cannabis.net',
-            'weedmaps.com',
-            'leafly.com',
-            'herbapproach.com',
-            'grasscity.com',
-            'marijuanacentral.com',
-            'cannabisculture.com',
-            'hightimes.com',
-            'smokecartel.com',
-            'dankstop.com',
-            'grassdoor.com',
-            'eaze.com',
-            'nuggmd.com',
-            'medicalmarijuana.com',
-            'buyweed247.com',
-            'bcweedexpress.com',
-            'westcoastsupply.cc',
-            'getwhitepalm.com',
-            'budmail.com',
-            'kingtuts.ca',
-            'shamrockweed.ca',
-            'chronicstore.ca',
-            'speedgreens.com',
-            'togo.ca',
-            'ganjagrams.ca',
-            'cannabismo.ca',
-            'cheebas.com',
-            'bcmedichronic.com',
-            'canna-wholesalers.com',
-            'buylowgreen.com',
-            'mmjexpress.cc',
-            'cannabudpost.com',
-            'goldbuds.com',
-            'thehighclub.ca',
-            'chronicpost.ca',
-            'kushstation.com',
-            'bcbuddispensary.ca',
-            'ganjagrams.com',
-            'silkroad.com',
-            'alphabay.com',
-            'hansa.com',
-            'dream-market.com',
-            'wallstreet-market.com',
-            'empire-market.com',
-            'whitehouse-market.com',
-            'darknetmarkets.com',
-            'deepdotweb.com',
-            'dreaddit.com',
-            'smoketower.com',
-            'everyonedoesit.com',
-            'bongoutlet.com',
-            'thickassglass.com',
-            'headshop.com',
-            'cannabox.com',
-            'hemper.co',
-            'dopeboo.com',
-            'badassglass.com',
-            'grindersforlife.com',
-            'pipesdaddy.com',
-            'smoke-honest.com',
-            'esmokershop.com',
-            'blaze1.us',
-            'marijuana.com',
-            'rollitup.org',
-            'thcfarmer.com',
-            '420magazine.com',
-            'growweedeasy.com',
-            'icmag.com',
-            'cannabis.com',
-            'marijuana-seeds.nl',
-            'seedsman.com',
-            'crop-king-seeds.com',
-            'seedsupreme.com',
-            'msnl.com',
-            'truenorthseedbank.com',
-            'cannabis-seeds-bank.com',
-            'amsterdammarijuanaseeds.com',
-            'i49.net',
-            'cannabisseeds.com',
-            'marihuanaseeds.es',
-            'allbud.com',
-            'strainfinder.com',
-            'thcdesign.com',
-            'iheartjane.com',
-            'dutchie.com',
-            'pakalolo.com',
-            'budtrader.com',
-            'massroots.com',
-            'wheresweed.com',
-            'theweedstreetjournal.com',
-            'dopemagazine.com',
-            'cannabislifenetwork.com',
-            'thestonerscookbook.com',
-            'cannabistech.com',
-            'thcfinder.com',
-            'nuggetry.com',
-            'cannabisreports.com',
-            'analyticalcannabis.com',
-            'greenrushdaily.com',
-            'merryjane.com',
-            'thestash.com',
-            'ganjapreneur.com',
-            'cannabisnow.com',
-            'thecannabist.co',
-            'wikileaf.com',
-            'medicalmarijuanainc.com',
-            
-            // Violence/gore sites
-            'bestgore.com',
-            'liveleak.com',
-            'documenting-reality.com',
-            'rotten.com',
-            'theync.com',
-            'goregrish.com',
-            'shockchan.com',
-            'kaotic.com',
-            'seegore.com',
-            'sickestvideos.com',
-            'deathdate.info',
-            'runthegauntlet.org',
-            'cutedeadguys.net',
-            'hoodsite.com',
-            'crazyshit.com',
-            'heavy-r.com',
-            'deathclock.com',
-            'morbidreality.com',
-            'goregasm.com',
-            'gorecenter.com',
-            'deadhouse.org',
-            'offensivex.com',
-            'gorexxx.com',
-            'ogrishforum.com',
-            'lemonparty.org',
-            'meatspin.com',
-            'tubgirl.com',
-            '2girls1cup.com',
-            'hai2u.com',
-            'goatse.info',
-            'goatse.cx',
-            'shock-sites.com',
-            '3guys1hammer.com',
-            '1guy1jar.com',
-            'painolympics.com',
-            'bluewaffle.net',
-            'findadeath.com',
-            'celebritymorgue.com',
-            'deathwatch.com',
-            'deathtube.org',
-            'crimescene.com',
-            'gorish.com',
-            'shock.tv',
-            'extremevideos.com',
-            'sickvideos.net',
-            'horrorvideos.com',
-            'brutalvideos.com',
-            'executions.ws',
-            'terrorvideos.com',
-            'shockingvideos.com',
-            'watchpeopledie.tv',
-            'brutaltube.com',
-            'realgorevideos.com',
-            'murdervideos.com',
-            'deathvideos.org',
-            'gorevideo.com',
-            'violentvideos.net',
-            'extremegore.com',
-            'horriblevideos.com',
-            'sickestsite.com',
-            'shockingsite.com',
-            'disgustingvideos.com',
-            'nastyvideos.org',
-            'morbidvideos.com',
-            'gruesomevideos.com',
-            'disturbingvideos.net',
-            'twisted-videos.com',
-            'realdeaths.com',
-            'actualmurders.com',
-            'truehorror.com',
-            'realgore.net',
-            'hardcoregore.com',
-            'extremedeaths.com',
-            'shocksite.com',
-            'offended.com',
-            'terrifying.com',
-            'nightmarefuel.com',
-            'creepyvideos.com'
-        ];
+        const frame = document.getElementById("frame")
+        const bar = document.getElementById("bar")
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            var url = input.value.trim();
-            
-            if (url) {
-                // remove protocol if exists
-                var cleanUrl = url.replace(/^https?:\/\//, '');
-                // remove www if exists
-                cleanUrl = cleanUrl.replace(/^www\./, '');
-                // get just the domain
-                var domain = cleanUrl.split('/')[0].toLowerCase();
-                
-                // check if blocked
-                var isBlocked = false;
-                for (var i = 0; i < blockedSites.length; i++) {
-                    if (domain === blockedSites[i] || domain.endsWith('.' + blockedSites[i])) {
-                        isBlocked = true;
-                        break;
-                    }
-                }
-                
-                if (isBlocked) {
-                    alert('This website is blocked.');
-                    input.value = '';
-                    return;
-                }
-                
-                // add https:// if no protocol specified
-                if (!url.match(/^https?:\/\//)) {
-                    url = 'https://' + url;
-                }
-                
-                // go directly to the URL
-                window.location.href = url;
+        const { ScramjetController } = $scramjetLoadController()
+        const scramjet = new ScramjetController({
+            files: {
+                all: "/ixlmath/scram/scramjet.all.js",
+                wasm: "/ixlmath/scram/scramjet.wasm.wasm",
+                sync: "/ixlmath/scram/scramjet.sync.js"
+            },
+            prefix: "/ixlmath/go/" 
+        })
+        scramjet.init()
+
+        function nav() {
+            let url = bar.value.trim()
+            if (!url) return;
+
+            if (!url.includes(".")) {
+                url = "https://search.brave.com/search?q=" + encodeURIComponent(url)
+            } else if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                url = "https://" + url
             }
-        });
 
-        // auto focus on load
-        window.onload = function() {
-            setTimeout(function() {
-                input.focus();
-            }, 100);
-        };
+            frame.src = scramjet.encodeUrl(url)
+        }
 
-        input.addEventListener('focus', function() {
-            this.parentElement.style.boxShadow = '0 0 0 4px rgba(255, 255, 255, 0.05)';
-        });
-
-        input.addEventListener('blur', function() {
-            this.parentElement.style.boxShadow = 'none';
-        });
-    </script>
+        bar.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                nav()
+            }
+        })
+    </script>   
 </body>
 </html>
