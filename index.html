@@ -6,9 +6,20 @@
     
     <title>IXL Math | Learn math online</title>
     <meta name="description" content="IXL offers hundreds of grade-level math skills to explore and learn! Students can practice math at their own pace with interactive questions and immediate feedback.">
+    <meta name="keywords" content="IXL, math, learning, practice, skills, online math, education">
     
     <meta property="og:title" content="IXL Math | Learn math online">
+    <meta property="og:description" content="IXL offers hundreds of grade-level math skills to explore and learn! Students can practice math at their own pace with interactive questions and immediate feedback.">
     <meta property="og:image" content="https://freeappsforme.com/wp-content/uploads/2020/06/ixl-math-logo-1536x1536.jpg">
+    <meta property="og:image:width" content="1536">
+    <meta property="og:image:height" content="1536">
+    <meta property="og:type" content="website">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="IXL Math | Learn math online">
+    <meta name="twitter:description" content="IXL offers hundreds of grade-level math skills to explore and learn!">
+    <meta name="twitter:image" content="https://freeappsforme.com/wp-content/uploads/2020/06/ixl-math-logo-1536x1536.jpg">
+    
     <link rel="icon" href="https://freeappsforme.com/wp-content/uploads/2020/06/ixl-math-logo-1536x1536.jpg">
 
     <style>
@@ -23,10 +34,10 @@
             background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
             overflow: hidden;
             font-family: "Geist", sans-serif;
-            -webkit-font-smoothing: antialiased; /* random fix for safari */
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* load screen stuff */
+        /* load screen logic */
         #loading_gate {
             position: fixed;
             top: 0; left: 0;
@@ -40,11 +51,11 @@
         }
 
         .spin_obj {
-            width: 60px; height: 60px;
+            width: 4rem; height: 4rem;
             border-radius: 50%;
-            border: 7px solid #fff;
+            border: 8px solid #fff;
             border-right-color: transparent;
-            animation: rot_loop .8s infinite linear;
+            animation: rot_loop .7s infinite linear;
         }
 
         @keyframes rot_loop {
@@ -53,10 +64,10 @@
 
         .h-hidden {
             opacity: 0 !important;
-            pointer-events: none;
+            visibility: hidden;
         }
 
-        /* stars bg */
+        /* bg layers */
         .bg_wrap {
             position: fixed;
             top: 0; left: 0;
@@ -65,7 +76,6 @@
         }
 
         #s1, #s2, #s3 { background: transparent; position: absolute; top: 0; left: 0; }
-
         #s1 { width: 1px; height: 1px; box-shadow: 412px 720px #fff, 1200px 1100px #fff, 90px 1500px #fff, 1300px 500px #fff, 800px 200px #fff, 1600px 900px #fff; animation: move1 60s linear infinite; }
         #s2 { width: 2px; height: 2px; box-shadow: 300px 500px #fff, 900px 100px #fff, 1400px 1600px #fff; animation: move1 110s linear infinite; }
         #s3 { width: 3px; height: 3px; box-shadow: 100px 800px #fff, 1100px 400px #fff; animation: move1 180s linear infinite; }
@@ -75,7 +85,7 @@
             to { transform: translateY(-2000px); }
         }
 
-        /* main nav section */
+        /* menu section */
         .nav_center {
             position: relative;
             z-index: 20;
@@ -92,7 +102,6 @@
             font-size: 55px;
             font-weight: 200;
             margin: 0 0 30px 0;
-            text-transform: none;
         }
 
         .btn_link {
@@ -107,13 +116,12 @@
             transition: 0.3s;
             width: 260px;
             text-align: center;
-            display: block;
         }
 
         .btn_link:hover {
             background: rgba(255, 255, 255, 0.08);
             border-color: rgba(255, 255, 255, 0.4);
-            transform: scale(1.02); /* added a tiny pop effect */
+            transform: scale(1.02);
         }
     </style>
 </head>
@@ -140,11 +148,11 @@
     </div>
 
     <script>
-        // hide the loader when done
-        window.onload = () => {
-            console.log("page ready...");
+        // kill the loader when page is ready
+        window.addEventListener("load", () => {
+            console.log("assets loaded.");
             document.getElementById("loading_gate").classList.add("h-hidden");
-        };
+        });
     </script>
 
 </body>
