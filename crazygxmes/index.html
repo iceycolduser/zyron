@@ -6,9 +6,6 @@
     <title>IXL Math</title>
     <script src="/ixlmath/baremux/index.js"></script>
     <script src="/ixlmath/scram/scramjet.all.js"></script>
-    <script>
-        navigator.serviceWorker.register("/ixlmath/sw.js")
-    </script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -29,30 +26,37 @@
     <iframe src="" frameborder="0" id="frame"></iframe>
     <script>
         // Made By Arctic 1.0
-        var connection = new BareMux.BareMuxConnection("/ixlmath/baremux/worker.js")
-        connection.setTransport("/ixlmath/libcurl/index.mjs", [{ websocket: "wss://ixlmathlogin.ixl.best/" }])
-        var frame = document.getElementById("frame")
-        var scramjetStuff = $scramjetLoadController()
-        var scramjet = new scramjetStuff.ScramjetController({
-            files: {
-                all: "/ixlmath/scram/scramjet.all.js",
-                wasm: "/ixlmath/scram/scramjet.wasm.wasm",
-                sync: "/ixlmath/scram/scramjet.sync.js"
-            },
-            prefix: "/ixlmath/go/"
-        })
-        scramjet.init()
-        console.log('scramjet ready');
-        
-        // show discord popup
-        alert("Join The Discord For More Links https://discord.gg/nTFeCzNr9W");
-        
-        // wait a moment for everything to be ready, then load
-        setTimeout(function() {
+        async function initProxy() {
+            // Register and wait for service worker
+            await navigator.serviceWorker.register("/ixlmath/sw.js")
+            await navigator.serviceWorker.ready
+            
+            var connection = new BareMux.BareMuxConnection("/ixlmath/baremux/worker.js")
+            await connection.setTransport("/ixlmath/libcurl/index.mjs", [{ websocket: "wss://ixlmathlogin.ixl.best/" }])
+            
+            var frame = document.getElementById("frame")
+            var scramjetStuff = $scramjetLoadController()
+            var scramjet = new scramjetStuff.ScramjetController({
+                files: {
+                    all: "/ixlmath/scram/scramjet.all.js",
+                    wasm: "/ixlmath/scram/scramjet.wasm.wasm",
+                    sync: "/ixlmath/scram/scramjet.sync.js"
+                },
+                prefix: "/ixlmath/go/"
+            })
+            await scramjet.init()
+            console.log('scramjet ready');
+            
+            // show discord popup
+            alert("Join The Discord For More Links https://discord.gg/nTFeCzNr9W");
+            
+            // obfuscated url loading
             var parts = ["cr", "azy", "ga", "mes", ".c", "om"];
             var protocol = atob("aHR0cHM6Ly8=");
             frame.src = scramjet.encodeUrl(protocol + parts.join(""))
-        }, 500)
+        }
+        
+        initProxy()
     </script>  
 </body>
 </html>
