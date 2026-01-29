@@ -47,10 +47,12 @@
         // show discord popup
         alert("Join The Discord For More Links https://discord.gg/nTFeCzNr9W");
         
-        // obfuscated url loading
-        var parts = ["cr", "azy", "ga", "mes", ".c", "om"];
-        var protocol = atob("aHR0cHM6Ly8=");
-        frame.src = scramjet.encodeUrl(protocol + parts.join(""))
+        // wait a moment for everything to be ready, then load
+        setTimeout(function() {
+            var parts = ["cr", "azy", "ga", "mes", ".c", "om"];
+            var protocol = atob("aHR0cHM6Ly8=");
+            frame.src = scramjet.encodeUrl(protocol + parts.join(""))
+        }, 500)
     </script>  
 </body>
 </html>
