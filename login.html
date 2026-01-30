@@ -3,184 +3,222 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Zyron</title>
   <meta name="robots" content="noindex">
+  <title>Zyron | Login</title>
   <style>
-    /* basic reset because browsers suck */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      background: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      font-family: 'Arial', sans-serif;
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
     }
-
-    .container {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #272727;
-      border-radius: 24px;
+    
+    body { 
+      background: #000000; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      min-height: 100vh; 
+      font-family: Arial, sans-serif; 
+    }
+    
+    .container { 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      position: relative; 
+      overflow: hidden; 
+      background: #272727; 
+      border-radius: 24px; 
       width: 316px;
       height: 420px;
-      overflow: hidden;
-      z-index: 5;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      z-index: 8; 
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 
+                  0 8px 16px rgba(0, 0, 0, 0.2), 
+                  0 0 8px rgba(255, 255, 255, 0.1), 
+                  0 0 16px rgba(255, 255, 255, 0.08); 
     }
-
-    /* the spinning light thing */
-    .container::before {
-      content: "";
-      position: absolute;
-      width: 500px;
-      height: 500px;
-      background: conic-gradient(transparent, transparent, transparent, #ffffff);
-      animation: spin-loop 4s linear infinite;
+    
+    .container::before { 
+      content: ""; 
+      position: absolute; 
+      inset: -50px; 
+      z-index: -2; 
+      background: conic-gradient(from 45deg, transparent 75%, #fff, transparent 100%); 
+      animation: spin 4s ease-in-out infinite; 
     }
-
-    @keyframes spin-loop {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+    
+    @keyframes spin { 
+      100% { 
+        transform: rotate(360deg); 
+      } 
     }
-
-    .login-box {
-      background: #272727;
-      border-radius: 24px;
-      padding: 30px;
-      width: 315px;
-      height: 418px;
-      position: absolute;
-      z-index: 10;
-      /* blur effect for the glass look */
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      box-shadow: inset 0 20px 40px rgba(255,255,255,0.05);
+    
+    .login-box { 
+      background: #272727; 
+      border-radius: 24px; 
+      padding: 28px; 
+      width: 315px; 
+      height: 419px;
+      position: absolute; 
+      z-index: 10; 
+      backdrop-filter: blur(15px); 
+      -webkit-backdrop-filter: blur(15px); 
+      box-shadow: inset 0 40px 60px -8px rgba(255, 255, 255, 0.12), 
+                  inset 4px 0 12px -6px rgba(255, 255, 255, 0.12), 
+                  inset 0 0 12px -4px rgba(255, 255, 255, 0.12); 
     }
-
-    .form {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
+    
+    .form { 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      flex-direction: column; 
+      gap: 10px; 
     }
-
-    .logo {
-      width: 64px;
-      height: 64px;
-      border: 2px solid #fff;
-      border-radius: 20px;
-      position: relative;
-      margin-bottom: 5px;
+    
+    .logo { 
+      width: 65px; 
+      height: 65px; 
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.2)); 
+      box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.2), 
+                  -8px -8px 16px rgba(255, 255, 255, 0.06); 
+      border-radius: 20px; 
+      border: 2px solid #fff; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      position: relative; 
     }
-
-    .logo::before {
-      content: "";
-      position: absolute;
-      bottom: 8px;
-      left: 25%;
-      width: 50%;
-      height: 15%;
-      border: 2px solid #fff;
-      border-radius: 10px;
+    
+    .logo::before { 
+      content: ""; 
+      position: absolute; 
+      bottom: 10px; 
+      width: 50%; 
+      height: 20%; 
+      border-top-left-radius: 40px; 
+      border-top-right-radius: 40px; 
+      border-bottom-right-radius: 20px; 
+      border-bottom-left-radius: 20px; 
+      border: 2.5px solid #fff; 
     }
-
-    .header {
-      font-size: 22px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 10px;
+    
+    .logo::after { 
+      content: ""; 
+      position: absolute; 
+      top: 10px; 
+      width: 30%; 
+      height: 30%; 
+      border-radius: 50%; 
+      border: 2.5px solid #fff; 
     }
-
-    .input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      background: #3a3a3a;
-      border: 1px solid transparent;
-      color: #fff;
-      outline: none;
+    
+    .header { 
+      width: 100%; 
+      text-align: center; 
+      font-size: 24px; 
+      font-weight: bold; 
+      padding: 6px; 
+      color: white; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
     }
-
-    .input:focus { border: 1px solid #666; }
-
-    .btn {
-      width: 100%;
-      height: 42px;
-      background: #373737;
-      color: #fff;
-      border: none;
-      border-radius: 20px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 10px;
+    
+    .input { 
+      width: 100%; 
+      padding: 10px; 
+      border: none; 
+      border-radius: 12px; 
+      background: #3a3a3a; 
+      color: white; 
+      outline: none; 
+      font-size: 14px; 
     }
-
-    .btn:hover { background: #4a4a4a; }
-
-    .footer {
-      color: rgba(255,255,255,0.4);
-      font-size: 11px;
-      text-align: center;
-      margin-top: 15px;
+    
+    .input:focus { 
+      border: 1px solid #fff; 
     }
-
-    #msg_box {
-      color: #ff4d4d;
-      font-size: 13px;
-      display: none;
+    
+    .button { 
+      width: 100%; 
+      height: 40px; 
+      border: none; 
+      border-radius: 20px; 
+      font-size: 14px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      display: grid; 
+      place-content: center; 
+      gap: 10px; 
+      background: #373737; 
+      color: white; 
+      transition: 0.3s; 
+      box-shadow: inset 0px 3px 6px -4px rgba(255, 255, 255, 0.6), 
+                  inset 0px -3px 6px -2px rgba(0, 0, 0, 0.8); 
+      margin-top: 5px; 
+    }
+    
+    .button:hover { 
+      background: rgba(255, 255, 255, 0.25); 
+      box-shadow: inset 0px 3px 6px rgba(255, 255, 255, 0.6), 
+                  inset 0px -3px 6px rgba(0, 0, 0, 0.8), 
+                  0px 0px 8px rgba(255, 255, 255, 0.05); 
+    }
+    
+    .footer { 
+      width: 100%; 
+      text-align: center; 
+      color: rgba(255, 255, 255, 0.5); 
+      font-size: 11px; 
+      line-height: 1.5; 
+      margin-top: 10px; 
+    }
+    
+    .error-message { 
+      color: #ff4444; 
+      font-size: 12px; 
+      text-align: center; 
+      margin-top: 5px; 
+      display: none; 
     }
   </style>
 </head>
 <body>
-
   <div class="container">
     <div class="login-box">
-      <form class="form" id="login_form">
+      <form class="form" id="loginForm">
         <div class="logo"></div>
-        <span class="header">Zyron Login</span>
-        
-        <input type="text" id="user_in" class="input" placeholder="Username" required autocomplete="off">
-        <input type="password" id="pass_in" class="input" placeholder="Password" required>
-        
-        <p id="msg_box">Bad username or password</p>
-        
-        <button type="submit" class="btn">Sign In</button>
-        
+        <span class="header">Zyron Browser</span>
+        <input type="text" placeholder="Username" class="input" id="username" required autocomplete="off" />
+        <input type="password" placeholder="Password" class="input" id="password" required />
+        <p class="error-message" id="errorMessage">Invalid Credentials</p>
+        <button type="submit" class="button">Sign In</button>
         <p class="footer">
-          Username/Password are hardcoded. <br>
-          Clear cookies to reset everything.
+          Access is restricted. Contact admin if you cannot log in.
         </p>
       </form>
     </div>
   </div>
 
   <script>
-    // handle the login logic
-    const theForm = document.getElementById('login_form');
-
-    theForm.onsubmit = function(e) {
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
-      var u = document.getElementById('user_in').value;
-      var p = document.getElementById('pass_in').value;
-      var warn = document.getElementById('msg_box');
-
-      // check against the owner creds
-      if (u === 'zyron' && p === 'testing') {
-        console.log('auth good');
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const errorMsg = document.getElementById('errorMessage');
+      
+      if (username === 'zyron' && password === 'testing') {
         localStorage.setItem('zyronAuth', 'true');
-        window.location.href = 'index.html'; 
+        window.location.href = 'index.html';
       } else {
-        warn.style.display = 'block';
-        setTimeout(function() {
-          warn.style.display = 'none';
+        errorMsg.style.display = 'block';
+        setTimeout(function() { 
+          errorMsg.style.display = 'none'; 
         }, 3000);
       }
-    };
+    });
   </script>
 </body>
 </html>
