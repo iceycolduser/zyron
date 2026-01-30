@@ -142,7 +142,7 @@
         .autocomplete-item:last-child { border-bottom: none; }
 
         .frame-container {
-            position: absolute; top: 100px; /* Adjusted since bookmark bar is gone */
+            position: absolute; top: 100px; 
             left: 0; right: 0; bottom: 0;
             transition: top 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -282,14 +282,13 @@
             <span onclick="goBack()" id="back-btn" title="Back">←</span>
             <span onclick="goForward()" id="forward-btn" title="Forward">→</span>
             <span onclick="reloadPage()" title="Reload (Ctrl+R)">↻</span>
-            </div>
+        </div>
         <div class="search-container">
             <span class="url-icon" id="url-icon">🔍</span>
             <input type="text" placeholder="Search or enter URL" id="bar" autocomplete="off">
             <div class="autocomplete" id="autocomplete"></div>
         </div>
         <div class="nav-buttons">
-            <span onclick="toggleBookmark()" title="Bookmark (Ctrl+D)">★</span>
             <span onclick="showKeyboardShortcuts()" title="Keyboard Shortcuts">⌨</span>
             <span onclick="toggleFullScreen()" title="Fullscreen (F11)">⛶</span>
         </div>
@@ -300,7 +299,7 @@
             <div class="new-tab-content">
                 <h1 style="font-weight: 500; margin-bottom: 10px;">Zyron Browser</h1>
                 <p style="color: #9aa0a6; font-size: 14px; margin-bottom: 20px;">Browse safely and privately</p>
-                </div>
+            </div>
         </div>
     </div>
 
@@ -329,10 +328,6 @@
             <div class="shortcut-row">
                 <span>Reload</span>
                 <span class="key">Ctrl + R</span>
-            </div>
-            <div class="shortcut-row">
-                <span>Bookmark Page</span>
-                <span class="key">Ctrl + D</span>
             </div>
             <div class="shortcut-row">
                 <span>Focus Search</span>
@@ -365,7 +360,6 @@
         });
         scramjet.init();
 
-        // Load saved data
         function loadData() {
             const savedTabs = localStorage.getItem('zyron-tabs');
             const savedBookmarks = localStorage.getItem('zyron-bookmarks');
@@ -374,7 +368,6 @@
             if (savedBookmarks) {
                 bookmarks = JSON.parse(savedBookmarks);
             } else {
-                // Default bookmarks cleared as requested
                 bookmarks = [];
                 saveBookmarks();
             }
@@ -608,27 +601,6 @@
             }
         }
 
-        function toggleBookmark() {
-            const currentTab = tabs.find(t => t.id === activeTabId);
-            if (!currentTab.url) {
-                showToast('No page to bookmark');
-                return;
-            }
-            const existingIndex = bookmarks.findIndex(b => b.url === currentTab.url);
-            if (existingIndex >= 0) {
-                bookmarks.splice(existingIndex, 1);
-                showToast('Bookmark removed');
-            } else {
-                bookmarks.push({
-                    title: currentTab.title,
-                    url: currentTab.url,
-                    favicon: currentTab.favicon || '🌐'
-                });
-                showToast('Bookmark added');
-            }
-            saveBookmarks();
-        }
-
         function showContextMenu(x, y, tabId) {
             const menu = document.getElementById('context-menu');
             menu.innerHTML = `
@@ -667,12 +639,10 @@
             document.getElementById('keyboard-shortcuts-panel').classList.remove('show');
         }
 
-        // Initialize
         window.addEventListener('load', loadData);
         document.getElementById('bar').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') nav();
         });
-
     </script>
 </body>
 </html>
