@@ -115,6 +115,14 @@
 
         .url-icon {
             margin-right: 8px; font-size: 14px; color: #9aa0a6;
+            display: flex; align-items: center;
+        }
+
+        /* Styling for your custom HTTPS icon */
+        .secure-icon {
+            width: 14px;
+            height: 14px;
+            object-fit: contain;
         }
 
         input#bar {
@@ -579,7 +587,8 @@
         function updateUrlIcon(url) {
             const icon = document.getElementById('url-icon');
             if (url && url.startsWith('https://')) {
-                icon.textContent = '🔒';
+                // REPLACED LOCK EMOJI WITH PNG
+                icon.innerHTML = '<img src="sucurehttpsicon.png" class="secure-icon" alt="Secure">';
             } else if (url) {
                 icon.textContent = '🌐';
             } else {
@@ -641,7 +650,7 @@
         }
 
         function hideKeyboardShortcuts() {
-            document.getElementById('keyboard-shortcuts-panel').classList.remove('show');
+            document.getElementById('keyboard-shortcuts-panel').classList.remove('remove');
         }
 
         window.addEventListener('load', loadData);
@@ -651,5 +660,3 @@
     </script>
 </body>
 </html>
-
-
