@@ -108,6 +108,15 @@
         .setting-btn.active-wisp { border-color: var(--accent); background: var(--accent-glow); color: white; }
         .setting-btn.primary { background: var(--accent); color: white; border: none; font-size: 12px; padding: 14px; }
 
+        .custom-wisp-box {
+            display: flex; gap: 5px; margin-top: 5px;
+        }
+        .custom-wisp-input {
+            flex: 1; background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px;
+            color: white; padding: 8px; font-size: 11px; outline: none;
+        }
+        .custom-wisp-input:focus { border-color: var(--accent); }
+
         .section-label { color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 2px; margin: 15px 0 5px 0; display: block; }
     </style>
 </head>
@@ -163,6 +172,11 @@
                     <button id="wisp-backup3" class="setting-btn" style="flex:1;" onclick="setWisp('backup3')">Backup 3</button>
                 </div>
                 <button id="wisp-backup4" class="setting-btn" onclick="setWisp('backup4')">Backup 4</button>
+                
+                <div class="custom-wisp-box">
+                    <input type="text" id="custom-wisp-url" class="custom-wisp-input" placeholder="wss://your-wisp-server/wisp/">
+                    <button class="setting-btn" style="margin:0; width: auto; padding: 0 15px;" onclick="setCustomWisp()">Use</button>
+                </div>
             </div>
 
             <button class="setting-btn" onclick="hideSettings()" style="margin-top: 20px; border: none; background: transparent; opacity: 0.6; text-transform: none; letter-spacing: 0;">
@@ -201,8 +215,21 @@
         function setWisp(type) {
             currentWisp = wispUrls[type];
             document.querySelectorAll('.active-wisp').forEach(btn => btn.classList.remove('active-wisp'));
-            document.getElementById(`wisp-${type}`).classList.add('active-wisp');
+            if(document.getElementById(`wisp-${type}`)) {
+                document.getElementById(`wisp-${type}`).classList.add('active-wisp');
+            }
             initProxy();
+        }
+
+        // New function for the custom input
+        function setCustomWisp() {
+            const url = document.getElementById('custom-wisp-url').value.trim();
+            if(!url.startsWith('ws')) return alert('Please enter a valid wss:// URL');
+            
+            currentWisp = url;
+            document.querySelectorAll('.active-wisp').forEach(btn => btn.classList.remove('active-wisp'));
+            initProxy();
+            alert('Connected to custom Wisp server');
         }
 
         function showBH() { document.getElementById('loading-screen').style.display = 'flex'; document.getElementById('loading-screen').style.opacity = '1'; }
