@@ -75,6 +75,12 @@
             transition: all 0.2s; color: var(--text-muted); user-select: none;
         }
         .nav-button:hover { background: var(--hover); color: var(--accent); }
+        
+        /* Specific styling for the custom settings image */
+        .settings-icon-img {
+            width: 20px; height: 20px; object-fit: contain; opacity: 0.7; transition: 0.2s;
+        }
+        .nav-button:hover .settings-icon-img { opacity: 1; filter: drop-shadow(0 0 5px var(--accent)); }
 
         .search-container { flex-grow: 1; display: flex; align-items: center; background: var(--input-bg); border-radius: 12px; padding: 0 16px; border: 1px solid var(--border); height: 38px; transition: all 0.2s ease; }
         .search-container:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
@@ -126,7 +132,9 @@
                 <input type="text" placeholder="Search Zyron or enter URL" id="bar" autocomplete="off">
             </div>
             <div class="nav-buttons">
-                <div class="nav-button" onclick="showSettings()">⚙</div>
+                <div class="nav-button" onclick="showSettings()">
+                    <img src="settingsicon.png" class="settings-icon-img" alt="Settings">
+                </div>
                 <div class="nav-button" onclick="toggleFullScreen()">⛶</div>
             </div>
         </nav>
@@ -168,7 +176,6 @@
         let tabs = [];
         let activeTabId = null;
         
-        // Server URLs
         const wispUrls = {
             main: "wss://zyrongardeningalore.speedinsure.hk/wisp/",
             backup2: "wss://wisp.rhw.one/",
@@ -194,11 +201,8 @@
 
         function setWisp(type) {
             currentWisp = wispUrls[type];
-            
-            // UI Update
             document.querySelectorAll('.active-wisp').forEach(btn => btn.classList.remove('active-wisp'));
             document.getElementById(`wisp-${type}`).classList.add('active-wisp');
-            
             initProxy();
         }
 
