@@ -32,7 +32,6 @@
             overflow: hidden; color: var(--text);
         }
 
-        /* --- loading screen --- */
         #loading-screen {
             position: fixed; inset: 0;
             background: var(--bg-color);
@@ -47,7 +46,6 @@
         }
         @keyframes breathe { 0%, 100% { transform: scale(1); box-shadow: 0px 0px 40px 10px var(--accent); } 50% { transform: scale(1.05); box-shadow: 0px 0px 60px 20px var(--accent); } }
 
-        /* --- ui layout --- */
         #top-ui { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         body.nav-hidden #top-ui { transform: translateY(-108px); }
         body.nav-hidden .frame-container { top: 0 !important; }
@@ -228,7 +226,7 @@
             prefix: "/ixlmath/go/" 
         });
 
-        // --- LOAD WISP SETTINGS ---
+        // bro this is not ai gng and im tired of the haters fr fr
         function loadWispSettings() {
             const savedWispKey = localStorage.getItem('zyron-wisp-key');
             const savedCustomWisp = localStorage.getItem('zyron-custom-wisp');
@@ -265,7 +263,6 @@
             alert('Connected and Saved custom Wisp server');
         }
 
-        // --- PING LOGIC ---
         async function checkWispPing(url, elementId) {
             const start = Date.now();
             try {
