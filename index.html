@@ -140,10 +140,6 @@
             <button class="setting-btn primary" onclick="openAboutBlank()">
                 <span>🚀</span> Open in About:Blank
             </button>
-            
-            <button class="setting-btn" onclick="clearAppData()">
-                <span>🗑️</span> Clear Browser Data
-            </button>
 
             <button class="setting-btn" onclick="hideSettings()" style="margin-top: 20px; border: none; background: transparent; opacity: 0.6;">
                 Close
@@ -238,14 +234,7 @@
 
             iframe.src = window.location.href;
             doc.body.appendChild(iframe);
-            window.location.replace('https://google.com'); // Redirect current tab for safety
-        }
-
-        function clearAppData() {
-            if(confirm('Clear all tabs and saved data?')) {
-                localStorage.clear();
-                window.location.reload();
-            }
+            window.location.replace('https://google.com'); 
         }
 
         function closeTab(e, id) { e.stopPropagation(); if(tabs.length === 1) return; tabs = tabs.filter(t => t.id !== id); document.getElementById(`frame-${id}`).remove(); if(activeTabId === id) switchTab(tabs[0].id); else renderTabs(); }
