@@ -162,7 +162,7 @@
                     <button id="wisp-backup2" class="setting-btn" style="flex:1;" onclick="setWisp('backup2')">Backup 2</button>
                     <button id="wisp-backup3" class="setting-btn" style="flex:1;" onclick="setWisp('backup3')">Backup 3</button>
                 </div>
-                <button id="wisp-backup4" class="setting-btn" onclick="setWisp('backup4')">Backup 4 (Render)</button>
+                <button id="wisp-backup4" class="setting-btn" onclick="setWisp('backup4')">Backup 4</button>
             </div>
 
             <button class="setting-btn" onclick="hideSettings()" style="margin-top: 20px; border: none; background: transparent; opacity: 0.6; text-transform: none; letter-spacing: 0;">
@@ -172,7 +172,6 @@
     </div>
 
     <script>
-        // server list - updated with backup 4
         const wispUrls = {
             main: "wss://zyrongardeningalore.speedinsure.hk/wisp/",
             backup2: "wss://wisp.rhw.one/",
@@ -204,7 +203,6 @@
             document.querySelectorAll('.active-wisp').forEach(btn => btn.classList.remove('active-wisp'));
             document.getElementById(`wisp-${type}`).classList.add('active-wisp');
             initProxy();
-            // maybe add a small alert or toast here later?
         }
 
         function showBH() { document.getElementById('loading-screen').style.display = 'flex'; document.getElementById('loading-screen').style.opacity = '1'; }
