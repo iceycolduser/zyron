@@ -160,7 +160,7 @@
             
             <span class="section-label">General</span>
             <button class="setting-btn primary" onclick="openAboutBlank()">Open in About:Blank</button>
-            <button id="toggle-nav-btn" class="setting-btn" onclick="toggleNavbar()">Hide Navigation Bar</button>
+            <button class="setting-btn" onclick="hideNavbar()">Hide Navigation Bar</button>
 
             <span class="section-label">Wisp Servers</span>
             <div style="display: flex; flex-direction: column; gap: 0;">
@@ -228,37 +228,29 @@
             prefix: "/ixlmath/go/" 
         });
 
-        // --- LOAD SETTINGS FROM STORAGE ---
-        function loadSettings() {
+        // --- LOAD WISP SETTINGS ---
+        function loadWispSettings() {
             const savedWispKey = localStorage.getItem('zyron-wisp-key');
             const savedCustomWisp = localStorage.getItem('zyron-custom-wisp');
-            const navHidden = localStorage.getItem('zyron-nav-hidden') === 'true';
 
             if (savedCustomWisp) {
                 currentWisp = savedCustomWisp;
                 document.getElementById('custom-wisp-url').value = savedCustomWisp;
+                document.querySelectorAll('.active-wisp').forEach(btn => btn.classList.remove('active-wisp'));
             } else if (savedWispKey && wispUrls[savedWispKey]) {
                 currentWisp = wispUrls[savedWispKey];
-                updateWispUI(savedWispKey);
+                document.querySelectorAll('.active-wisp').forEach(btn => btn.classList.remove('active-wisp'));
+                const btn = document.getElementById(`wisp-${savedWispKey}`);
+                if (btn) btn.classList.add('active-wisp');
             }
-
-            if (navHidden) {
-                document.body.classList.add('nav-hidden');
-                document.getElementById('toggle-nav-btn').innerText = "Show Navigation Bar";
-            }
-        }
-
-        function updateWispUI(type) {
-            document.querySelectorAll('.active-wisp').forEach(btn => btn.classList.remove('active-wisp'));
-            const btn = document.getElementById(`wisp-${type}`);
-            if (btn) btn.classList.add('active-wisp');
         }
 
         function setWisp(type) {
             currentWisp = wispUrls[type];
             localStorage.setItem('zyron-wisp-key', type);
             localStorage.removeItem('zyron-custom-wisp');
-            updateWispUI(type);
+            document.querySelectorAll('.active-wisp').forEach(btn => btn.classList.remove('active-wisp'));
+            if(document.getElementById(`wisp-${type}`)) document.getElementById(`wisp-${type}`).classList.add('active-wisp');
             initProxy();
         }
 
@@ -271,12 +263,6 @@
             document.querySelectorAll('.active-wisp').forEach(btn => btn.classList.remove('active-wisp'));
             initProxy();
             alert('Connected and Saved custom Wisp server');
-        }
-
-        function toggleNavbar() {
-            const isHidden = document.body.classList.toggle('nav-hidden');
-            localStorage.setItem('zyron-nav-hidden', isHidden);
-            document.getElementById('toggle-nav-btn').innerText = isHidden ? "Show Navigation Bar" : "Hide Navigation Bar";
         }
 
         // --- PING LOGIC ---
@@ -377,6 +363,7 @@
             } catch (e) {}
         }, 1000);
 
+        function hideNavbar() { document.body.classList.add('nav-hidden'); hideSettings(); }
         function openAboutBlank() {
             const win = window.open('about:blank', '_blank');
             if (!win) return alert('Popups blocked!');
@@ -397,7 +384,7 @@
         function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
 
         window.onload = () => { 
-            loadSettings(); 
+            loadWispSettings();
             initProxy();
             scramjet.init();
             createNewTab(); 
