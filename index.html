@@ -56,7 +56,6 @@
         .tab.active { background: var(--tab-active); color: var(--text); border-color: var(--border); }
         .tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--accent); box-shadow: 0 -2px 10px var(--accent); }
         
-        /* Fixed Close Button */
         .close-tab-btn {
             background: none; border: none; color: inherit; font-size: 16px;
             cursor: pointer; padding: 2px 6px; border-radius: 4px; line-height: 1;
@@ -84,12 +83,19 @@
         .new-tab-screen { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at center, #1a1a2e 0%, var(--bg-color) 100%); color: #fff; flex-direction: column; z-index: 5; }
         .new-tab-content h1 { font-size: 48px; font-weight: 700; background: linear-gradient(to bottom, #fff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
 
-        /* --- MODALS --- */
+        /* --- SETTINGS MODAL --- */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 100000; backdrop-filter: blur(4px); }
         .modal-overlay.show { display: flex; }
-        .modal-content { background: #1a1a1e; padding: 30px; border-radius: 16px; border: 1px solid var(--border); width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .shortcut-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); color: var(--text-muted); }
-        .key { background: var(--bg-color); padding: 4px 8px; border-radius: 6px; color: var(--accent); font-family: monospace; font-size: 12px; border: 1px solid var(--border); }
+        .modal-content { background: #1a1a1e; padding: 30px; border-radius: 16px; border: 1px solid var(--border); width: 350px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center; }
+        
+        .setting-btn {
+            width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid var(--border);
+            background: var(--hover); color: var(--text); font-weight: 600; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .setting-btn:hover { border-color: var(--accent); background: var(--tab-active); color: var(--accent); }
+        .setting-btn.primary { background: var(--accent); color: white; border: none; }
+        .setting-btn.primary:hover { background: #9333ea; color: white; transform: translateY(-2px); }
 
         .loading-bar { position: absolute; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; transition: width 0.3s; z-index: 10001; }
     </style>
@@ -113,7 +119,7 @@
             <input type="text" placeholder="Search Zyron or enter URL" id="bar" autocomplete="off">
         </div>
         <div class="nav-buttons">
-            <div class="nav-button" onclick="showShortcuts()">⌨</div>
+            <div class="nav-button" onclick="showSettings()">⚙</div>
             <div class="nav-button" onclick="toggleFullScreen()">⛶</div>
         </div>
     </nav>
@@ -127,14 +133,21 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="shortcuts-modal" onclick="hideShortcuts()">
+    <div class="modal-overlay" id="settings-modal" onclick="hideSettings()">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <h2 style="margin-top:0; color: var(--accent);">Shortcuts</h2>
-            <div class="shortcut-row"><span>New Tab</span><span class="key">Ctrl + T</span></div>
-            <div class="shortcut-row"><span>Close Tab</span><span class="key">Ctrl + W</span></div>
-            <div class="shortcut-row"><span>Reload</span><span class="key">Ctrl + R</span></div>
-            <div class="shortcut-row"><span>Search</span><span class="key">Enter</span></div>
-            <button onclick="hideShortcuts()" style="margin-top:20px; width:100%; padding:10px; background:var(--accent); border:none; border-radius:8px; color:white; cursor:pointer; font-weight:600;">Close</button>
+            <h2 style="margin-top:0; color: var(--accent);">Settings</h2>
+            
+            <button class="setting-btn primary" onclick="openAboutBlank()">
+                <span>🚀</span> Open in About:Blank
+            </button>
+            
+            <button class="setting-btn" onclick="clearAppData()">
+                <span>🗑️</span> Clear Browser Data
+            </button>
+
+            <button class="setting-btn" onclick="hideSettings()" style="margin-top: 20px; border: none; background: transparent; opacity: 0.6;">
+                Close
+            </button>
         </div>
     </div>
 
@@ -207,9 +220,37 @@
             renderTabs();
         }
 
+        function openAboutBlank() {
+            const win = window.open('about:blank', '_blank');
+            if (!win) {
+                alert('Please allow popups for this feature to work!');
+                return;
+            }
+            const doc = win.document;
+            const iframe = doc.createElement('iframe');
+            const style = iframe.style;
+
+            doc.title = 'Classes'; // Stealth Title
+            style.position = 'fixed';
+            style.top = style.bottom = style.left = style.right = 0;
+            style.width = style.height = '100%';
+            style.border = style.outline = 'none';
+
+            iframe.src = window.location.href;
+            doc.body.appendChild(iframe);
+            window.location.replace('https://google.com'); // Redirect current tab for safety
+        }
+
+        function clearAppData() {
+            if(confirm('Clear all tabs and saved data?')) {
+                localStorage.clear();
+                window.location.reload();
+            }
+        }
+
         function closeTab(e, id) { e.stopPropagation(); if(tabs.length === 1) return; tabs = tabs.filter(t => t.id !== id); document.getElementById(`frame-${id}`).remove(); if(activeTabId === id) switchTab(tabs[0].id); else renderTabs(); }
-        function showShortcuts() { document.getElementById('shortcuts-modal').classList.add('show'); }
-        function hideShortcuts() { document.getElementById('shortcuts-modal').classList.remove('show'); }
+        function showSettings() { document.getElementById('settings-modal').classList.add('show'); }
+        function hideSettings() { document.getElementById('settings-modal').classList.remove('show'); }
         function reloadPage() { showBH(); document.getElementById(`frame-${activeTabId}`).src = document.getElementById(`frame-${activeTabId}`).src; }
         function goBack() { try { document.getElementById(`frame-${activeTabId}`).contentWindow.history.back(); } catch(e){} }
         function goForward() { try { document.getElementById(`frame-${activeTabId}`).contentWindow.history.forward(); } catch(e){} }
