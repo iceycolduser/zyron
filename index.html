@@ -134,7 +134,7 @@
                 <div class="nav-button" onclick="reloadPage()">↻</div>
             </div>
             <div class="search-container">
-                <input type="text" placeholder="Search Zyron or enter URL" id="bar" autocomplete="off">
+                <input type="text" placeholder="Search with Brave or enter URL" id="bar" autocomplete="off">
             </div>
             <div class="nav-buttons">
                 <div class="nav-button" onclick="showSettings()">
@@ -285,7 +285,8 @@
             const val = document.getElementById('bar').value.trim();
             if(!val) return;
             showBH();
-            let url = (val.includes('.') && !val.includes(' ')) ? (val.startsWith('http') ? val : 'https://' + val) : `https://www.google.com/search?q=${encodeURIComponent(val)}`;
+            // Switched search engine to Brave Search
+            let url = (val.includes('.') && !val.includes(' ')) ? (val.startsWith('http') ? val : 'https://' + val) : `https://search.brave.com/search?q=${encodeURIComponent(val)}`;
             const tab = tabs.find(t => t.id === activeTabId);
             tab.url = url; tab.title = url.split('/')[2] || url;
             document.getElementById(`frame-${activeTabId}`).src = scramjet.encodeUrl(url);
