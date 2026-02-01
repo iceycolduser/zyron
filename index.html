@@ -11,10 +11,10 @@
     <style>
         :root {
             --bg-color: #0a0a0c;
-            --nav-bg: rgba(20, 20, 23, 0.8);
+            --nav-bg: rgba(20, 20, 23, 0.9);
             --tab-active: #1a1a1e;
             --tab-inactive: transparent;
-            --accent: #a855f7; /* Modern Purple */
+            --accent: #a855f7;
             --accent-glow: rgba(168, 85, 247, 0.4);
             --text: #f8fafc;
             --text-muted: #94a3b8;
@@ -30,14 +30,13 @@
             overflow: hidden; color: var(--text);
         }
 
-        /* --- BLACK HOLE LOADING SCREEN --- */
+        /* --- LOADING SCREEN --- */
         #loading-screen {
             position: fixed; inset: 0;
             background: var(--bg-color);
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            z-index: 99999; 
-            transition: opacity 0.5s ease;
+            z-index: 99999; transition: opacity 0.5s ease;
         }
         .black-hole { 
             height: 100px; aspect-ratio: 1; background-color: black; border-radius: 50%; 
@@ -46,135 +45,76 @@
         }
         @keyframes breathe { 0%, 100% { transform: scale(1); box-shadow: 0px 0px 40px 10px var(--accent); } 50% { transform: scale(1.05); box-shadow: 0px 0px 60px 20px var(--accent); } }
 
-        /* --- MODERN UI --- */
-        .tab-strip { 
-            display: flex; align-items: flex-end; padding: 12px 15px 0 15px; 
-            background: var(--bg-color); gap: 4px; height: 40px; 
-            backdrop-filter: blur(10px);
-        }
-
+        /* --- TABS & NAV --- */
+        .tab-strip { display: flex; align-items: flex-end; padding: 12px 15px 0 15px; background: var(--bg-color); gap: 4px; height: 40px; }
         .tab { 
-            background: var(--tab-inactive); padding: 8px 16px; 
-            border-radius: 10px 10px 0 0; font-size: 13px; 
-            min-width: 140px; max-width: 220px; color: var(--text-muted); 
-            border: 1px solid transparent; border-bottom: none;
-            transition: all 0.2s ease; position: relative;
-            display: flex; align-items: center; gap: 8px;
+            background: var(--tab-inactive); padding: 8px 12px; border-radius: 10px 10px 0 0; 
+            font-size: 13px; min-width: 140px; max-width: 200px; color: var(--text-muted); 
+            border: 1px solid transparent; border-bottom: none; transition: all 0.2s ease; 
+            position: relative; display: flex; align-items: center; gap: 8px; cursor: pointer;
         }
-
-        .tab.active { 
-            background: var(--tab-active); color: var(--text); 
-            border-color: var(--border);
+        .tab.active { background: var(--tab-active); color: var(--text); border-color: var(--border); }
+        .tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--accent); box-shadow: 0 -2px 10px var(--accent); }
+        
+        /* Fixed Close Button */
+        .close-tab-btn {
+            background: none; border: none; color: inherit; font-size: 16px;
+            cursor: pointer; padding: 2px 6px; border-radius: 4px; line-height: 1;
+            display: flex; align-items: center; justify-content: center; opacity: 0.5;
         }
+        .close-tab-btn:hover { background: rgba(255, 96, 92, 0.2); color: #ff605c; opacity: 1; }
 
-        .tab.active::after {
-            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-            height: 2px; background: var(--accent); box-shadow: 0 -2px 10px var(--accent);
-        }
-
-        .tab:hover:not(.active) { background: var(--hover); color: var(--text); }
-
-        .navbar { 
-            display: flex; align-items: center; height: 56px; 
-            background-color: var(--nav-bg); padding: 0 20px; gap: 16px;
-            border-bottom: 1px solid var(--border); backdrop-filter: blur(12px);
-        }
-
-        .nav-buttons { display: flex; gap: 12px; }
-        .nav-buttons span { 
-            cursor: pointer; padding: 8px; border-radius: 8px;
-            transition: all 0.2s; color: var(--text-muted);
+        .navbar { display: flex; align-items: center; height: 56px; background-color: var(--nav-bg); padding: 0 20px; gap: 16px; border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); }
+        .nav-buttons { display: flex; gap: 8px; }
+        .nav-button { 
+            cursor: pointer; width: 34px; height: 34px; border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; color: var(--text-muted); user-select: none;
         }
-        .nav-buttons span:hover { background: var(--hover); color: var(--accent); }
+        .nav-button:hover { background: var(--hover); color: var(--accent); }
 
-        .search-container { 
-            flex-grow: 1; display: flex; align-items: center; 
-            background: var(--input-bg); border-radius: 12px; 
-            padding: 0 16px; border: 1px solid var(--border); height: 38px;
-            transition: all 0.2s ease;
-        }
-        .search-container:focus-within { 
-            border-color: var(--accent); 
-            box-shadow: 0 0 0 3px var(--accent-glow);
-        }
-
-        .url-icon img { width: 16px; height: 16px; opacity: 0.7; }
-
-        input#bar { 
-            flex-grow: 1; background: transparent; border: none; 
-            color: white; padding: 8px; font-size: 14px; outline: none; 
-        }
+        .search-container { flex-grow: 1; display: flex; align-items: center; background: var(--input-bg); border-radius: 12px; padding: 0 16px; border: 1px solid var(--border); height: 38px; transition: all 0.2s ease; }
+        .search-container:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+        input#bar { flex-grow: 1; background: transparent; border: none; color: white; padding: 8px; font-size: 14px; outline: none; }
 
         .frame-container { position: absolute; top: 108px; left: 0; right: 0; bottom: 0; background: #000; }
         iframe { width: 100%; height: 100%; border: none; display: none; }
         iframe.active { display: block; }
 
-        .new-tab-screen { 
-            position: absolute; inset: 0; display: flex; align-items: center; 
-            justify-content: center; background: radial-gradient(circle at center, #1a1a2e 0%, var(--bg-color) 100%); 
-            color: #fff; flex-direction: column; z-index: 5; 
-        }
+        .new-tab-screen { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at center, #1a1a2e 0%, var(--bg-color) 100%); color: #fff; flex-direction: column; z-index: 5; }
+        .new-tab-content h1 { font-size: 48px; font-weight: 700; background: linear-gradient(to bottom, #fff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
 
-        .new-tab-content h1 { 
-            font-size: 48px; font-weight: 700; letter-spacing: -1px;
-            background: linear-gradient(to bottom, #fff, #a855f7);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 0;
-        }
+        /* --- MODALS --- */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 100000; backdrop-filter: blur(4px); }
+        .modal-overlay.show { display: flex; }
+        .modal-content { background: #1a1a1e; padding: 30px; border-radius: 16px; border: 1px solid var(--border); width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .shortcut-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); color: var(--text-muted); }
+        .key { background: var(--bg-color); padding: 4px 8px; border-radius: 6px; color: var(--accent); font-family: monospace; font-size: 12px; border: 1px solid var(--border); }
 
-        .add-tab { 
-            font-size: 20px; color: var(--text-muted); padding: 0 10px; 
-            cursor: pointer; align-self: center; margin-bottom: 6px;
-        }
-        .add-tab:hover { color: var(--accent); }
-
-        /* --- LOADING BAR --- */
-        .loading-bar { 
-            position: absolute; top: 0; left: 0; height: 3px; 
-            background: linear-gradient(90deg, var(--accent), #d8b4fe); 
-            width: 0%; transition: width 0.3s ease; z-index: 10000; 
-        }
-
-        /* --- TOAST & CONTEXT --- */
-        .context-menu { 
-            position: fixed; background: #1a1a1e; border: 1px solid var(--border);
-            border-radius: 12px; padding: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            display: none; min-width: 180px; z-index: 100000;
-        }
-        .context-menu-item { 
-            padding: 10px 12px; border-radius: 6px; font-size: 13px; 
-            cursor: pointer; transition: 0.2s;
-        }
-        .context-menu-item:hover { background: var(--accent); color: white; }
+        .loading-bar { position: absolute; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; transition: width 0.3s; z-index: 10001; }
     </style>
 </head>
 <body>
 
-    <div id="loading-screen">
-        <div class="black-hole"></div>
-        <p style="margin-top: 40px; font-weight: 500; letter-spacing: 4px; color: var(--accent); font-size: 12px;">INITIALIZING ZYRON</p>
-    </div>
-
+    <div id="loading-screen"><div class="black-hole"></div></div>
     <div class="loading-bar" id="loading-bar"></div>
 
     <div class="tab-strip" id="tab-strip">
-        <div class="add-tab" onclick="createNewTab()">+</div>
+        <div class="nav-button" onclick="createNewTab()" style="font-size: 24px;">+</div>
     </div>
 
     <nav class="navbar">
         <div class="nav-buttons">
-            <span onclick="goBack()">←</span>
-            <span onclick="goForward()">→</span>
-            <span onclick="reloadPage()">↻</span>
+            <div class="nav-button" onclick="goBack()">←</div>
+            <div class="nav-button" onclick="goForward()">→</div>
+            <div class="nav-button" onclick="reloadPage()">↻</div>
         </div>
         <div class="search-container">
-            <span class="url-icon" id="url-icon"><img src="internetlogo.png"></span>
-            <input type="text" placeholder="Search the web or enter a URL..." id="bar" autocomplete="off">
+            <input type="text" placeholder="Search Zyron or enter URL" id="bar" autocomplete="off">
         </div>
         <div class="nav-buttons">
-            <span onclick="showKeyboardShortcuts()">⌨</span>
-            <span onclick="toggleFullScreen()">⛶</span>
+            <div class="nav-button" onclick="showShortcuts()">⌨</div>
+            <div class="nav-button" onclick="toggleFullScreen()">⛶</div>
         </div>
     </nav>
 
@@ -182,17 +122,27 @@
         <div id="new-tab-ui" class="new-tab-screen">
             <div class="new-tab-content" style="text-align: center;">
                 <h1>Zyron</h1>
-                <p style="color: var(--text-muted); font-size: 14px; margin-top: 10px; letter-spacing: 1px;">PREMIUM BROWSING EXPERIENCE</p>
+                <p style="color: var(--text-muted); letter-spacing: 2px; font-size: 12px;">PREMIUM BROWSING</p>
             </div>
         </div>
     </div>
 
-    <div class="context-menu" id="context-menu"></div>
+    <div class="modal-overlay" id="shortcuts-modal" onclick="hideShortcuts()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2 style="margin-top:0; color: var(--accent);">Shortcuts</h2>
+            <div class="shortcut-row"><span>New Tab</span><span class="key">Ctrl + T</span></div>
+            <div class="shortcut-row"><span>Close Tab</span><span class="key">Ctrl + W</span></div>
+            <div class="shortcut-row"><span>Reload</span><span class="key">Ctrl + R</span></div>
+            <div class="shortcut-row"><span>Search</span><span class="key">Enter</span></div>
+            <button onclick="hideShortcuts()" style="margin-top:20px; width:100%; padding:10px; background:var(--accent); border:none; border-radius:8px; color:white; cursor:pointer; font-weight:600;">Close</button>
+        </div>
+    </div>
 
     <script>
         let tabs = [];
         let activeTabId = null;
 
+        // Proxy Init
         const connection = new BareMux.BareMuxConnection("/ixlmath/baremux/worker.js");
         connection.setTransport("/ixlmath/libcurl/index.mjs", [{ websocket: "wss://ixlmathlogin.ixl.best/wisp/" }]);
         const { ScramjetController } = $scramjetLoadController();
@@ -202,46 +152,18 @@
         });
         scramjet.init();
 
-        function showBH() { 
-            const bh = document.getElementById('loading-screen');
-            bh.style.display = 'flex'; bh.style.opacity = '1'; 
-        }
-        function hideBH() { 
-            const bh = document.getElementById('loading-screen');
-            bh.style.opacity = '0'; 
-            setTimeout(() => bh.style.display = 'none', 500); 
-        }
-
-        function loadData() {
-            const savedTabs = localStorage.getItem('zyron-tabs');
-            if (savedTabs) {
-                const tabsData = JSON.parse(savedTabs);
-                if (tabsData.length > 0) {
-                    tabsData.forEach(tab => {
-                        const id = Date.now() + Math.random();
-                        tabs.push({ ...tab, id });
-                        const frame = document.createElement('iframe');
-                        frame.id = `frame-${id}`;
-                        frame.onload = hideBH;
-                        if (tab.url) frame.src = scramjet.encodeUrl(tab.url);
-                        document.getElementById('frame-container').appendChild(frame);
-                    });
-                    switchTab(tabs[0].id);
-                    return;
-                }
-            }
-            createNewTab();
-        }
+        function showBH() { document.getElementById('loading-screen').style.display = 'flex'; document.getElementById('loading-screen').style.opacity = '1'; }
+        function hideBH() { document.getElementById('loading-screen').style.opacity = '0'; setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500); }
 
         function createNewTab() {
             const id = Date.now() + Math.random();
             tabs.push({ id, url: '', title: 'New Tab', loading: false });
             const frame = document.createElement('iframe');
             frame.id = `frame-${id}`;
-            frame.addEventListener('load', () => {
-                const tab = tabs.find(t => t.id === id);
-                if (tab) { tab.loading = false; renderTabs(); hideLoadingBar(); hideBH(); }
-            });
+            frame.onload = () => { 
+                const t = tabs.find(x => x.id === id); 
+                if(t) { t.loading = false; renderTabs(); hideBH(); hideLoadingBar(); }
+            };
             document.getElementById('frame-container').appendChild(frame);
             switchTab(id);
         }
@@ -249,60 +171,54 @@
         function switchTab(id) {
             activeTabId = id;
             document.querySelectorAll('iframe').forEach(f => f.classList.remove('active'));
-            const activeFrame = document.getElementById(`frame-${id}`);
-            if (activeFrame) activeFrame.classList.add('active');
-            const currentTab = tabs.find(t => t.id === id);
-            document.getElementById('bar').value = currentTab.url || '';
-            document.getElementById('new-tab-ui').style.display = activeFrame.src ? 'none' : 'flex';
-            updateUrlIcon(currentTab.url);
+            const frame = document.getElementById(`frame-${id}`);
+            if(frame) frame.classList.add('active');
+            const tab = tabs.find(t => t.id === id);
+            document.getElementById('bar').value = tab.url || '';
+            document.getElementById('new-tab-ui').style.display = frame.src ? 'none' : 'flex';
             renderTabs();
         }
 
         function renderTabs() {
             const strip = document.getElementById('tab-strip');
-            const addButton = strip.querySelector('.add-tab');
+            const addBtn = strip.querySelector('.nav-button');
             strip.querySelectorAll('.tab').forEach(t => t.remove());
             tabs.forEach(tab => {
                 const tabEl = document.createElement('div');
                 tabEl.className = `tab ${tab.id === activeTabId ? 'active' : ''}`;
-                let icon = tab.loading ? '⏳' : `<img src="internetlogo.png" style="width:14px">`;
-                tabEl.innerHTML = `<span>${icon}</span><span style="flex:1; overflow:hidden; text-overflow:ellipsis;">${tab.title}</span><span onclick="closeTab(event, ${tab.id})" style="opacity:0.5">×</span>`;
                 tabEl.onclick = () => switchTab(tab.id);
-                strip.insertBefore(tabEl, addButton);
+                tabEl.innerHTML = `
+                    <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${tab.title}</span>
+                    <button class="close-tab-btn" onclick="closeTab(event, ${tab.id})">×</button>
+                `;
+                strip.insertBefore(tabEl, addBtn);
             });
         }
 
         function nav() {
-            const input = document.getElementById('bar').value.trim();
-            let finalUrl = !input ? "https://google.com" : (input.includes('.') && !input.includes(' ')) ? (input.startsWith("http") ? input : "https://" + input) : `https://www.google.com/search?q=${encodeURIComponent(input)}`;
-            navigateToUrl(finalUrl);
-        }
-
-        function navigateToUrl(finalUrl) {
+            const val = document.getElementById('bar').value.trim();
+            if(!val) return;
             showBH(); showLoadingBar();
-            const currentTab = tabs.find(t => t.id === activeTabId);
-            currentTab.url = finalUrl; currentTab.loading = true;
-            try { const urlObj = new URL(finalUrl); currentTab.title = urlObj.hostname; } catch(e) { currentTab.title = finalUrl; }
-            document.getElementById(`frame-${activeTabId}`).src = scramjet.encodeUrl(finalUrl);
+            let url = (val.includes('.') && !val.includes(' ')) ? (val.startsWith('http') ? val : 'https://' + val) : `https://www.google.com/search?q=${encodeURIComponent(val)}`;
+            const tab = tabs.find(t => t.id === activeTabId);
+            tab.url = url; tab.title = url.split('/')[2] || url;
+            document.getElementById(`frame-${activeTabId}`).src = scramjet.encodeUrl(url);
             document.getElementById('new-tab-ui').style.display = 'none';
-            updateUrlIcon(finalUrl); renderTabs();
+            renderTabs();
         }
 
-        function updateUrlIcon(url) {
-            const icon = document.getElementById('url-icon');
-            icon.innerHTML = (url && url.startsWith('https://')) ? '<img src="sucurehttpsicon.png">' : '<img src="internetlogo.png">';
-        }
-
-        function reloadPage() { showBH(); showLoadingBar(); const frame = document.getElementById(`frame-${activeTabId}`); frame.src = frame.src; }
-        function goBack() { try { document.getElementById(`frame-${activeTabId}`).contentWindow.history.back(); } catch(e) {} }
-        function goForward() { try { document.getElementById(`frame-${activeTabId}`).contentWindow.history.forward(); } catch(e) {} }
-        function closeTab(e, id) { e.stopPropagation(); if (tabs.length === 1) return; tabs = tabs.filter(t => t.id !== id); document.getElementById(`frame-${id}`).remove(); if (activeTabId === id) switchTab(tabs[0].id); else renderTabs(); }
+        function closeTab(e, id) { e.stopPropagation(); if(tabs.length === 1) return; tabs = tabs.filter(t => t.id !== id); document.getElementById(`frame-${id}`).remove(); if(activeTabId === id) switchTab(tabs[0].id); else renderTabs(); }
+        function showShortcuts() { document.getElementById('shortcuts-modal').classList.add('show'); }
+        function hideShortcuts() { document.getElementById('shortcuts-modal').classList.remove('show'); }
+        function reloadPage() { showBH(); document.getElementById(`frame-${activeTabId}`).src = document.getElementById(`frame-${activeTabId}`).src; }
+        function goBack() { try { document.getElementById(`frame-${activeTabId}`).contentWindow.history.back(); } catch(e){} }
+        function goForward() { try { document.getElementById(`frame-${activeTabId}`).contentWindow.history.forward(); } catch(e){} }
         function showLoadingBar() { document.getElementById('loading-bar').style.width = '70%'; }
-        function hideLoadingBar() { const bar = document.getElementById('loading-bar'); bar.style.width = '100%'; setTimeout(() => { bar.style.width = '0%'; }, 300); }
+        function hideLoadingBar() { document.getElementById('loading-bar').style.width = '100%'; setTimeout(()=> document.getElementById('loading-bar').style.width='0', 300); }
         function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
 
-        window.addEventListener('load', () => { loadData(); setTimeout(hideBH, 1000); });
-        document.getElementById('bar').addEventListener('keydown', (e) => { if (e.key === 'Enter') nav(); });
+        window.onload = () => { createNewTab(); setTimeout(hideBH, 1000); };
+        document.getElementById('bar').onkeydown = (e) => { if(e.key === 'Enter') nav(); };
     </script>
 </body>
 </html>
