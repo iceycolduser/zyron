@@ -93,9 +93,9 @@
         .modal-content { background: #1a1a1e; padding: 30px; border-radius: 16px; border: 1px solid var(--border); width: 350px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center; }
         
         .setting-btn {
-            width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid var(--border);
-            background: var(--hover); color: var(--text); font-weight: 600; cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%; padding: 14px; margin: 10px 0; border-radius: 10px; border: 1px solid var(--border);
+            background: var(--hover); color: var(--text); font-weight: 500; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; text-transform: uppercase; letter-spacing: 1px; font-size: 12px;
         }
         .setting-btn:hover { border-color: var(--accent); background: var(--tab-active); color: var(--accent); }
         .setting-btn.primary { background: var(--accent); color: white; border: none; }
@@ -140,17 +140,17 @@
 
     <div class="modal-overlay" id="settings-modal" onclick="hideSettings()">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <h2 style="margin-top:0; color: var(--accent);">Settings</h2>
+            <h2 style="margin-top:0; color: var(--accent); letter-spacing: 2px; font-size: 18px; text-transform: uppercase;">Settings</h2>
             
             <button class="setting-btn primary" onclick="openAboutBlank()">
-                <span>🚀</span> Open in About:Blank
+                Open in About:Blank
             </button>
 
             <button class="setting-btn" onclick="hideNavbar()">
-                <span>👁️‍🗨️</span> Hide Navigation Bar
+                Hide Navigation Bar
             </button>
 
-            <button class="setting-btn" onclick="hideSettings()" style="margin-top: 20px; border: none; background: transparent; opacity: 0.6;">
+            <button class="setting-btn" onclick="hideSettings()" style="margin-top: 20px; border: none; background: transparent; opacity: 0.6; text-transform: none; letter-spacing: 0;">
                 Close
             </button>
         </div>
