@@ -171,7 +171,10 @@
                     <button id="wisp-backup2" class="setting-btn" style="flex:1;" onclick="setWisp('backup2')">Backup 2</button>
                     <button id="wisp-backup3" class="setting-btn" style="flex:1;" onclick="setWisp('backup3')">Backup 3</button>
                 </div>
-                <button id="wisp-backup4" class="setting-btn" onclick="setWisp('backup4')">Backup 4</button>
+                <div style="display: flex; gap: 8px;">
+                    <button id="wisp-backup4" class="setting-btn" style="flex:1;" onclick="setWisp('backup4')">Backup 4</button>
+                    <button id="wisp-backup5" class="setting-btn" style="flex:1;" onclick="setWisp('backup5')">Backup 5</button>
+                </div>
                 
                 <div class="custom-wisp-box">
                     <input type="text" id="custom-wisp-url" class="custom-wisp-input" placeholder="wss://your-wisp-server/wisp/">
@@ -190,7 +193,8 @@
             main: "wss://zyrongardeningalore.speedinsure.hk/wisp/",
             backup2: "wss://wisp.rhw.one/",
             backup3: "wss://ixlmathlogin.ixl.best/wisp/",
-            backup4: "wss://s0lace-j2np.onrender.com/wisp/"
+            backup4: "wss://s0lace-j2np.onrender.com/wisp/",
+            backup5: "wss://d21xg0yuq8irzv.cloudfront.net/wisp/"
         };
         
         let tabs = [];
@@ -221,11 +225,9 @@
             initProxy();
         }
 
-        // New function for the custom input
         function setCustomWisp() {
             const url = document.getElementById('custom-wisp-url').value.trim();
             if(!url.startsWith('ws')) return alert('Please enter a valid wss:// URL');
-            
             currentWisp = url;
             document.querySelectorAll('.active-wisp').forEach(btn => btn.classList.remove('active-wisp'));
             initProxy();
