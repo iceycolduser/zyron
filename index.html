@@ -1,274 +1,296 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zyron</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="/ixlmath/baremux/index.js"></script>
-<script src="/ixlmath/scram/scramjet.all.js"></script>
-<script>navigator.serviceWorker.register("/ixlmath/sw.js")</script>
-<style>
-    :root {
-        --bg: #0a0a0c;
-        --nav: rgba(20, 20, 23, 0.9);
-        --t-on: #1a1a1e;
-        --t-off: transparent;
-        --purp: #a855f7;
-        --glow: rgba(168, 85, 247, 0.4);
-        --txt: #f8fafc;
-        --muted: #94a3b8;
-        --in: #111114;
-        --line: #27272a;
-        --hvr: #1e1e22;
-    }
-
-    body, html {
-        margin: 0; padding: 0; height: 100%;
-        font-family: 'Inter', sans-serif;
-        background: var(--bg); overflow: hidden; color: var(--txt);
-    }
-
-    /* loading stuff */
-    #loading-screen {
-        position: fixed; inset: 0; background: var(--bg);
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        z-index: 99999; transition: 0.5s;
-    }
-    .black-hole { 
-        height: 100px; width: 100px; background: #000; border-radius: 50%; 
-        box-shadow: 0 0 40px 10px var(--purp), inset 0 0 10px #ffffff88; 
-        animation: pulse 3s infinite ease-in-out;
-    }
-    @keyframes pulse { 
-        0%, 100% { transform: scale(1); box-shadow: 0 0 40px 10px var(--purp); }
-        50% { transform: scale(1.05); box-shadow: 0 0 60px 20px var(--purp); } 
-    }
-
-    #top-ui { transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-    body.nav-hidden #top-ui { transform: translateY(-108px); }
-    body.nav-hidden .frame-container { top: 0 !important; }
-
-    /* tabs */
-    .tab-strip { display: flex; align-items: flex-end; padding: 12px 15px 0 15px; gap: 4px; height: 40px; background: var(--bg); }
-    .tab { 
-        background: var(--t-off); padding: 8px 12px; border-radius: 10px 10px 0 0; 
-        font-size: 13px; min-width: 140px; max-width: 200px; color: var(--muted); 
-        border: 1px solid transparent; border-bottom: none; transition: 0.2s; 
-        position: relative; display: flex; align-items: center; gap: 8px; cursor: pointer;
-    }
-    .tab.active { background: var(--t-on); color: var(--txt); border-color: var(--line); }
-    .tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--purp); box-shadow: 0 -2px 10px var(--purp); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zyron</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     
-    .close-btn { background: none; border: none; color: inherit; font-size: 16px; cursor: pointer; opacity: 0.5; }
-    .close-btn:hover { color: #ff605c; opacity: 1; }
+    <script src="/ixlmath/baremux/index.js"></script>
+    <script src="/ixlmath/scram/scramjet.all.js"></script>
+    <script>navigator.serviceWorker.register("/ixlmath/sw.js")</script>
 
-    .navbar { display: flex; align-items: center; height: 56px; background: var(--nav); padding: 0 20px; gap: 16px; border-bottom: 1px solid var(--line); backdrop-filter: blur(12px); }
-    .nav-btn { 
-        cursor: pointer; width: 34px; height: 34px; border-radius: 8px;
-        display: flex; align-items: center; justify-content: center;
-        transition: 0.2s; color: var(--muted);
-    }
-    .nav-btn:hover { background: var(--hvr); color: var(--purp); }
-    
-    .set-icon { width: 20px; height: 20px; object-fit: contain; opacity: 0.7; }
-    .nav-btn:hover .set-icon { opacity: 1; filter: drop-shadow(0 0 5px var(--purp)); }
+    <style>
+        :root {
+            --bg-color: #0a0a0c;
+            --nav-bg: rgba(20, 20, 23, 0.9);
+            --tab-active: #1a1a1e;
+            --tab-inactive: transparent;
+            --accent: #a855f7;
+            --accent-glow: rgba(168, 85, 247, 0.4);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --input-bg: #111114;
+            --border: #27272a;
+            --hover: #1e1e22;
+        }
 
-    .search-box { flex: 1; display: flex; align-items: center; background: var(--in); border-radius: 12px; padding: 0 16px; border: 1px solid var(--line); height: 38px; }
-    .search-box:focus-within { border-color: var(--purp); box-shadow: 0 0 0 3px var(--glow); }
-    #bar { width: 100%; background: transparent; border: none; color: #fff; outline: none; font-size: 14px; }
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            overflow: hidden; color: var(--text);
+        }
 
-    .frame-container { position: absolute; top: 108px; inset: 0; background: #000; transition: 0.4s; }
-    iframe { width: 100%; height: 100%; border: none; display: none; }
-    iframe.active { display: block; }
+        /* --- loading screen --- */
+        #loading-screen {
+            position: fixed; inset: 0;
+            background: var(--bg-color);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            z-index: 99999; transition: opacity 0.5s ease;
+        }
+        .black-hole { 
+            height: 100px; aspect-ratio: 1; background-color: black; border-radius: 50%; 
+            box-shadow: 0px 0px 40px 10px var(--accent), inset 0px 0px 10px #ffffff88; 
+            position: relative; animation: breathe 3s infinite ease-in-out;
+        }
+        @keyframes breathe { 0%, 100% { transform: scale(1); box-shadow: 0px 0px 40px 10px var(--accent); } 50% { transform: scale(1.05); box-shadow: 0px 0px 60px 20px var(--accent); } }
 
-    .home { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #1a1a2e 0%, var(--bg) 100%); z-index: 5; flex-direction: column; }
-    .home h1 { font-size: 48px; background: linear-gradient(#fff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
+        /* --- ui layout --- */
+        #top-ui { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        body.nav-hidden #top-ui { transform: translateY(-108px); }
+        body.nav-hidden .frame-container { top: 0 !important; }
 
-    /* settings menu */
-    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 100000; backdrop-filter: blur(4px); }
-    .modal.open { display: flex; }
-    .modal-inner { background: #1a1a1e; padding: 30px; border-radius: 16px; border: 1px solid var(--line); width: 380px; text-align: center; }
-    
-    .btn {
-        width: 100%; padding: 12px; margin: 6px 0; border-radius: 10px; border: 1px solid var(--line);
-        background: var(--hvr); color: var(--txt); font-weight: 500; cursor: pointer; font-size: 10px; text-transform: uppercase;
-    }
-    .btn:hover { border-color: var(--purp); color: var(--purp); }
-    .btn.active-link { border-color: var(--purp); background: var(--glow); }
-    .btn.main { background: var(--purp); border: none; font-size: 12px; padding: 14px; }
+        .tab-strip { display: flex; align-items: flex-end; padding: 12px 15px 0 15px; background: var(--bg-color); gap: 4px; height: 40px; }
+        .tab { 
+            background: var(--tab-inactive); padding: 8px 12px; border-radius: 10px 10px 0 0; 
+            font-size: 13px; min-width: 140px; max-width: 200px; color: var(--text-muted); 
+            border: 1px solid transparent; border-bottom: none; transition: all 0.2s ease; 
+            position: relative; display: flex; align-items: center; gap: 8px; cursor: pointer;
+        }
+        .tab.active { background: var(--tab-active); color: var(--text); border-color: var(--border); }
+        .tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--accent); box-shadow: 0 -2px 10px var(--accent); }
+        
+        .close-tab-btn {
+            background: none; border: none; color: inherit; font-size: 16px;
+            cursor: pointer; padding: 2px 6px; border-radius: 4px; line-height: 1;
+            display: flex; align-items: center; justify-content: center; opacity: 0.5;
+        }
+        .close-tab-btn:hover { background: rgba(255, 96, 92, 0.2); color: #ff605c; opacity: 1; }
 
-    .label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 2px; margin: 15px 0 5px 0; display: block; }
-    .load-bar { position: absolute; top: 0; left: 0; height: 3px; background: var(--purp); width: 0%; transition: 0.3s; z-index: 10001; }
-</style>
+        .navbar { display: flex; align-items: center; height: 56px; background-color: var(--nav-bg); padding: 0 20px; gap: 16px; border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); }
+        .nav-buttons { display: flex; gap: 8px; }
+        .nav-button { 
+            cursor: pointer; width: 34px; height: 34px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; color: var(--text-muted); user-select: none;
+        }
+        .nav-button:hover { background: var(--hover); color: var(--accent); }
+
+        /* settings button icon */
+        .settings-icon-img {
+            width: 20px; height: 20px; object-fit: contain; opacity: 0.7; transition: 0.2s;
+        }
+        .nav-button:hover .settings-icon-img { opacity: 1; filter: drop-shadow(0 0 5px var(--accent)); }
+
+        .search-container { flex-grow: 1; display: flex; align-items: center; background: var(--input-bg); border-radius: 12px; padding: 0 16px; border: 1px solid var(--border); height: 38px; transition: all 0.2s ease; }
+        .search-container:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+        input#bar { flex-grow: 1; background: transparent; border: none; color: white; padding: 8px; font-size: 14px; outline: none; }
+
+        .frame-container { position: absolute; top: 108px; left: 0; right: 0; bottom: 0; background: #000; transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        iframe { width: 100%; height: 100%; border: none; display: none; }
+        iframe.active { display: block; }
+
+        .new-tab-screen { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at center, #1a1a2e 0%, var(--bg-color) 100%); color: #fff; flex-direction: column; z-index: 5; }
+        .new-tab-content h1 { font-size: 48px; font-weight: 700; background: linear-gradient(to bottom, #fff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
+
+        /* settings menu */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 100000; backdrop-filter: blur(4px); }
+        .modal-overlay.show { display: flex; }
+        .modal-content { background: #1a1a1e; padding: 30px; border-radius: 16px; border: 1px solid var(--border); width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center; }
+        
+        .setting-btn {
+            width: 100%; padding: 12px; margin: 6px 0; border-radius: 10px; border: 1px solid var(--border);
+            background: var(--hover); color: var(--text); font-weight: 500; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; text-transform: uppercase; letter-spacing: 1px; font-size: 10px;
+        }
+        .setting-btn:hover { border-color: var(--accent); background: var(--tab-active); color: var(--accent); }
+        .setting-btn.active-wisp { border-color: var(--accent); background: var(--accent-glow); color: white; }
+        .setting-btn.primary { background: var(--accent); color: white; border: none; font-size: 12px; padding: 14px; }
+
+        .section-label { color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 2px; margin: 15px 0 5px 0; display: block; }
+        .loading-bar { position: absolute; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; transition: width 0.3s; z-index: 10001; }
+    </style>
 </head>
 <body>
 
     <div id="loading-screen"><div class="black-hole"></div></div>
-    <div class="load-bar" id="l-bar"></div>
+    <div class="loading-bar" id="loading-bar"></div>
 
     <div id="top-ui">
-        <div class="tab-strip" id="strip">
-            <div class="nav-btn" onclick="makeTab()" style="font-size: 24px;">+</div>
+        <div class="tab-strip" id="tab-strip">
+            <div class="nav-button" onclick="createNewTab()" style="font-size: 24px;">+</div>
         </div>
 
         <nav class="navbar">
-            <div style="display: flex; gap: 8px;">
-                <div class="nav-btn" onclick="back()">←</div>
-                <div class="nav-btn" onclick="next()">→</div>
-                <div class="nav-btn" onclick="refresh()">↻</div>
+            <div class="nav-buttons">
+                <div class="nav-button" onclick="goBack()">←</div>
+                <div class="nav-button" onclick="goForward()">→</div>
+                <div class="nav-button" onclick="reloadPage()">↻</div>
             </div>
-            <div class="search-box">
-                <input type="text" placeholder="Search Zyron or enter URL" id="bar">
+            <div class="search-container">
+                <input type="text" placeholder="Search Zyron or enter URL" id="bar" autocomplete="off">
             </div>
-            <div style="display: flex; gap: 8px;">
-                <div class="nav-btn" onclick="openSets()">
-                    <img src="settingsicon.png" class="set-icon">
+            <div class="nav-buttons">
+                <div class="nav-button" onclick="showSettings()">
+                    <img src="settingsicon.png" class="settings-icon-img" alt="Settings">
                 </div>
-                <div class="nav-btn" onclick="full()">⛶</div>
+                <div class="nav-button" onclick="toggleFullScreen()">⛶</div>
             </div>
         </nav>
     </div>
 
-    <div class="frame-container" id="f-container">
-        <div id="home-ui" class="home">
-            <div style="text-align: center;">
+    <div class="frame-container" id="frame-container">
+        <div id="new-tab-ui" class="new-tab-screen">
+            <div class="new-tab-content" style="text-align: center;">
                 <h1>Zyron</h1>
-                <p style="color: var(--muted); letter-spacing: 2px; font-size: 12px;">MADE BY ARCTIC 1.0</p>
+                <p style="color: var(--text-muted); letter-spacing: 2px; font-size: 12px;">MADE BY ARCTIC 1.0</p>
             </div>
         </div>
     </div>
 
-    <div class="modal" id="sets" onclick="closeSets()">
-        <div class="modal-inner" onclick="event.stopPropagation()">
-            <h2 style="color: var(--purp); letter-spacing: 2px; font-size: 18px; text-transform: uppercase;">Settings</h2>
+    <div class="modal-overlay" id="settings-modal" onclick="hideSettings()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2 style="margin-top:0; color: var(--accent); letter-spacing: 2px; font-size: 18px; text-transform: uppercase;">Settings</h2>
             
-            <span class="label">General</span>
-            <button class="btn main" onclick="cloak()">Open in About:Blank</button>
-            <button class="btn" onclick="hideNav()">Hide Navigation Bar</button>
+            <span class="section-label">General</span>
+            <button class="setting-btn primary" onclick="openAboutBlank()">Open in About:Blank</button>
+            <button class="setting-btn" onclick="hideNavbar()">Hide Navigation Bar</button>
 
-            <span class="label">Wisp Servers</span>
-            <button id="w-main" class="btn active-link" onclick="setWisp('main')">Main Server</button>
-            <div style="display: flex; gap: 8px;">
-                <button id="w-b2" class="btn" style="flex:1;" onclick="setWisp('backup2')">Backup 2</button>
-                <button id="w-b3" class="btn" style="flex:1;" onclick="setWisp('backup3')">Backup 3</button>
+            <span class="section-label">Wisp Servers</span>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <button id="wisp-main" class="setting-btn active-wisp" onclick="setWisp('main')">Main Server</button>
+                <div style="display: flex; gap: 8px;">
+                    <button id="wisp-backup2" class="setting-btn" style="flex:1;" onclick="setWisp('backup2')">Backup 2</button>
+                    <button id="wisp-backup3" class="setting-btn" style="flex:1;" onclick="setWisp('backup3')">Backup 3</button>
+                </div>
             </div>
 
-            <button class="btn" onclick="closeSets()" style="margin-top: 20px; border: none; background: transparent; opacity: 0.6;">Close</button>
+            <button class="setting-btn" onclick="hideSettings()" style="margin-top: 20px; border: none; background: transparent; opacity: 0.6; text-transform: none; letter-spacing: 0;">
+                Close
+            </button>
         </div>
     </div>
 
-<script>
-    let tabs = [];
-    let now = null;
-    
-    const urls = {
-        main: "wss://zyrongardeningalore.speedinsure.hk/wisp/",
-        backup2: "wss://wisp.rhw.one/",
-        backup3: "wss://ixlmathlogin.ixl.best/wisp/"
-    };
-    
-    let activeWisp = urls.main;
-    const conn = new BareMux.BareMuxConnection("/ixlmath/baremux/worker.js");
-    
-    function start() {
-        conn.setTransport("/ixlmath/libcurl/index.mjs", [{ websocket: activeWisp }]);
-    }
-
-    const { ScramjetController } = $scramjetLoadController();
-    const scram = new ScramjetController({
-        files: { all: "/ixlmath/scram/scramjet.all.js", wasm: "/ixlmath/scram/scramjet.wasm.wasm", sync: "/ixlmath/scram/scramjet.sync.js" },
-        prefix: "/ixlmath/go/" 
-    });
-    
-    start();
-    scram.init();
-
-    function setWisp(t) {
-        activeWisp = urls[t];
-        document.querySelectorAll('.active-link').forEach(b => b.classList.remove('active-link'));
-        const idMap = { main: 'w-main', backup2: 'w-b2', backup3: 'w-b3' };
-        document.getElementById(idMap[t]).classList.add('active-link');
-        start();
-    }
-
-    function showL() { document.getElementById('loading-screen').style.display = 'flex'; document.getElementById('loading-screen').style.opacity = '1'; }
-    function hideL() { document.getElementById('loading-screen').style.opacity = '0'; setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500); }
-
-    function makeTab() {
-        const id = Date.now() + Math.random();
-        tabs.push({ id, url: '', title: 'New Tab' });
-        const f = document.createElement('iframe');
-        f.id = `f-${id}`;
-        f.onload = () => { 
-            const t = tabs.find(x => x.id === id); 
-            if(t) { render(); hideL(); progress(100); }
+    <script>
+        // server list
+        const wispUrls = {
+            main: "wss://zyrongardeningalore.speedinsure.hk/wisp/",
+            backup2: "wss://wisp.rhw.one/",
+            backup3: "wss://ixlmathlogin.ixl.best/wisp/"
         };
-        document.getElementById('f-container').appendChild(f);
-        switchTab(id);
-    }
+        
+        let tabs = [];
+        let activeTabId = null;
+        let currentWisp = wispUrls.main;
 
-    function switchTab(id) {
-        now = id;
-        document.querySelectorAll('iframe').forEach(f => f.classList.remove('active'));
-        const f = document.getElementById(`f-${id}`);
-        if(f) f.classList.add('active');
-        const t = tabs.find(x => x.id === id);
-        document.getElementById('bar').value = t.url || '';
-        document.getElementById('home-ui').style.display = f.src ? 'none' : 'flex';
-        render();
-    }
+        const connection = new BareMux.BareMuxConnection("/ixlmath/baremux/worker.js");
+        
+        function initProxy() {
+            connection.setTransport("/ixlmath/libcurl/index.mjs", [{ websocket: currentWisp }]);
+        }
 
-    function render() {
-        const s = document.getElementById('strip');
-        const add = s.querySelector('.nav-btn');
-        s.querySelectorAll('.tab').forEach(t => t.remove());
-        tabs.forEach(t => {
-            const el = document.createElement('div');
-            el.className = `tab ${t.id === now ? 'active' : ''}`;
-            el.onclick = () => switchTab(t.id);
-            el.innerHTML = `<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${t.title}</span>
-                            <button class="close-btn" onclick="killTab(event, ${t.id})">×</button>`;
-            s.insertBefore(el, add);
+        const { ScramjetController } = $scramjetLoadController();
+        const scramjet = new ScramjetController({
+            files: { all: "/ixlmath/scram/scramjet.all.js", wasm: "/ixlmath/scram/scramjet.wasm.wasm", sync: "/ixlmath/scram/scramjet.sync.js" },
+            prefix: "/ixlmath/go/" 
         });
-    }
+        
+        initProxy();
+        scramjet.init();
 
-    function go() {
-        const v = document.getElementById('bar').value.trim();
-        if(!v) return;
-        showL(); progress(70);
-        let u = (v.includes('.') && !v.includes(' ')) ? (v.startsWith('http') ? v : 'https://' + v) : `https://www.google.com/search?q=${encodeURIComponent(v)}`;
-        const t = tabs.find(x => x.id === now);
-        t.url = u; t.title = u.split('/')[2] || u;
-        document.getElementById(`f-${now}`).src = scram.encodeUrl(u);
-        document.getElementById('home-ui').style.display = 'none';
-        render();
-    }
+        function setWisp(type) {
+            currentWisp = wispUrls[type];
+            document.querySelectorAll('.active-wisp').forEach(btn => btn.classList.remove('active-wisp'));
+            document.getElementById(`wisp-${type}`).classList.add('active-wisp');
+            initProxy();
+        }
 
-    function killTab(e, id) { e.stopPropagation(); if(tabs.length === 1) return; tabs = tabs.filter(t => t.id !== id); document.getElementById(`f-${id}`).remove(); if(now === id) switchTab(tabs[0].id); else render(); }
-    function openSets() { document.getElementById('sets').classList.add('open'); }
-    function closeSets() { document.getElementById('sets').classList.remove('open'); }
-    function refresh() { showL(); document.getElementById(`f-${now}`).src = document.getElementById(`f-${now}`).src; }
-    function back() { try { document.getElementById(`f-${now}`).contentWindow.history.back(); } catch(e){} }
-    function next() { try { document.getElementById(`f-${now}`).contentWindow.history.forward(); } catch(e){} }
-    function hideNav() { document.body.classList.add('nav-hidden'); closeSets(); }
-    function progress(p) { const b = document.getElementById('l-bar'); b.style.width = p + '%'; if(p===100) setTimeout(()=>b.style.width='0',300); }
-    function full() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
-    
-    function cloak() {
-        const w = window.open('about:blank', '_blank');
-        if (!w) return;
-        const d = w.document;
-        const f = d.createElement('iframe');
-        d.title = 'Classes';
-        f.style = 'position:fixed;top:0;left:0;width:100%;height:100%;border:none;';
-        f.src = window.location.href;
-        d.body.appendChild(f);
-        window.location.replace('https://google.com'); 
-    }
+        function showBH() { document.getElementById('loading-screen').style.display = 'flex'; document.getElementById('loading-screen').style.opacity = '1'; }
+        function hideBH() { document.getElementById('loading-screen').style.opacity = '0'; setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500); }
 
-    window.onload = () => { makeTab(); setTimeout(hideL, 1000); };
-    document.getElementById('bar').onkeydown = (e) => { if(e.key === 'Enter') go(); };
-</script>
+        function createNewTab() {
+            const id = Date.now() + Math.random();
+            tabs.push({ id, url: '', title: 'New Tab', loading: false });
+            const frame = document.createElement('iframe');
+            frame.id = `frame-${id}`;
+            frame.onload = () => { 
+                const t = tabs.find(x => x.id === id); 
+                if(t) { t.loading = false; renderTabs(); hideBH(); hideLoadingBar(); }
+            };
+            document.getElementById('frame-container').appendChild(frame);
+            switchTab(id);
+        }
+
+        function switchTab(id) {
+            activeTabId = id;
+            document.querySelectorAll('iframe').forEach(f => f.classList.remove('active'));
+            const frame = document.getElementById(`frame-${id}`);
+            if(frame) frame.classList.add('active');
+            const tab = tabs.find(t => t.id === id);
+            document.getElementById('bar').value = tab.url || '';
+            document.getElementById('new-tab-ui').style.display = frame.src ? 'none' : 'flex';
+            renderTabs();
+        }
+
+        function renderTabs() {
+            const strip = document.getElementById('tab-strip');
+            const addBtn = strip.querySelector('.nav-button');
+            strip.querySelectorAll('.tab').forEach(t => t.remove());
+            tabs.forEach(tab => {
+                const tabEl = document.createElement('div');
+                tabEl.className = `tab ${tab.id === activeTabId ? 'active' : ''}`;
+                tabEl.onclick = () => switchTab(tab.id);
+                tabEl.innerHTML = `
+                    <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${tab.title}</span>
+                    <button class="close-tab-btn" onclick="closeTab(event, ${tab.id})">×</button>
+                `;
+                strip.insertBefore(tabEl, addBtn);
+            });
+        }
+
+        function nav() {
+            const val = document.getElementById('bar').value.trim();
+            if(!val) return;
+            showBH(); showLoadingBar();
+            let url = (val.includes('.') && !val.includes(' ')) ? (val.startsWith('http') ? val : 'https://' + val) : `https://www.google.com/search?q=${encodeURIComponent(val)}`;
+            const tab = tabs.find(t => t.id === activeTabId);
+            tab.url = url; tab.title = url.split('/')[2] || url;
+            document.getElementById(`frame-${activeTabId}`).src = scramjet.encodeUrl(url);
+            document.getElementById('new-tab-ui').style.display = 'none';
+            renderTabs();
+        }
+
+        function hideNavbar() {
+            document.body.classList.add('nav-hidden');
+            hideSettings();
+        }
+
+        function openAboutBlank() {
+            const win = window.open('about:blank', '_blank');
+            if (!win) return alert('Popups blocked!');
+            const doc = win.document;
+            const iframe = doc.createElement('iframe');
+            doc.title = 'Classes';
+            iframe.style = 'position:fixed;top:0;left:0;width:100%;height:100%;border:none;';
+            iframe.src = window.location.href;
+            doc.body.appendChild(iframe);
+            window.location.replace('https://google.com'); 
+        }
+
+        function closeTab(e, id) { e.stopPropagation(); if(tabs.length === 1) return; tabs = tabs.filter(t => t.id !== id); document.getElementById(`frame-${id}`).remove(); if(activeTabId === id) switchTab(tabs[0].id); else renderTabs(); }
+        function showSettings() { document.getElementById('settings-modal').classList.add('show'); }
+        function hideSettings() { document.getElementById('settings-modal').classList.remove('show'); }
+        function reloadPage() { showBH(); document.getElementById(`frame-${activeTabId}`).src = document.getElementById(`frame-${activeTabId}`).src; }
+        function goBack() { try { document.getElementById(`frame-${activeTabId}`).contentWindow.history.back(); } catch(e){} }
+        function goForward() { try { document.getElementById(`frame-${activeTabId}`).contentWindow.history.forward(); } catch(e){} }
+        function showLoadingBar() { document.getElementById('loading-bar').style.width = '70%'; }
+        function hideLoadingBar() { document.getElementById('loading-bar').style.width = '100%'; setTimeout(()=> document.getElementById('loading-bar').style.width='0', 300); }
+        function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+
+        window.onload = () => { createNewTab(); setTimeout(hideBH, 1000); };
+        document.getElementById('bar').onkeydown = (e) => { if(e.key === 'Enter') nav(); };
+    </script>
 </body>
 </html>
