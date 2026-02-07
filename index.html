@@ -167,9 +167,6 @@
                 <button id="wisp-main" class="setting-btn active-wisp" onclick="setWisp('main')">
                     Main Server <span class="ping-tag" id="ping-main">--ms</span>
                 </button>
-                <button id="wisp-backup5" class="setting-btn" onclick="setWisp('backup5')">
-                    Backup 5 <span class="ping-tag" id="ping-backup5">--ms</span>
-                </button>
             </div>
 
             <button class="setting-btn" onclick="hideSettings()" style="margin-top: 20px; border: none; background: transparent; opacity: 0.6; text-transform: none; letter-spacing: 0;">
@@ -180,8 +177,7 @@
 
     <script>
         const wispUrls = {
-            main: "wss://zyrongardeningalore.speedinsure.hk/wisp/",
-            backup5: "wss://d3s9ejv11av7fd.cloudfront.net/wisp/"
+            main: "wss://d3s9ejv11av7fd.cloudfront.net/wisp/"
         };
         
         let tabs = [];
