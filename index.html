@@ -334,7 +334,7 @@
             initProxy();
             scramjet.init();
             createNewTab(); 
-            setTimeout(hideBH, 1000); 
+            hideBH(); 
         };
         document.getElementById('bar').onkeydown = (e) => { if(e.key === 'Enter') nav(); };
     </script>
