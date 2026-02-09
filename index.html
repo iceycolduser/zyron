@@ -216,13 +216,23 @@
             const start = Date.now();
             try {
                 const socket = new WebSocket(url);
+                const timeout = setTimeout(() => { socket.close(); }, 3000);
+
                 socket.onopen = () => {
+                    clearTimeout(timeout);
                     const ping = Date.now() - start;
-                    document.getElementById(elementId).innerText = ping + "ms";
+                    const el = document.getElementById(elementId);
+                    if(el) el.innerText = ping + "ms";
                     socket.close();
                 };
-                socket.onerror = () => { document.getElementById(elementId).innerText = "ERR"; };
-            } catch (e) { document.getElementById(elementId).innerText = "ERR"; }
+                socket.onerror = () => { 
+                    const el = document.getElementById(elementId);
+                    if(el) el.innerText = "ERR"; 
+                };
+            } catch (e) { 
+                const el = document.getElementById(elementId);
+                if(el) el.innerText = "ERR"; 
+            }
         }
 
         function refreshAllPings() {
@@ -230,6 +240,10 @@
                 checkWispPing(wispUrls[key], `ping-${key}`);
             });
         }
+
+        setInterval(() => {
+            checkWispPing(currentWisp, `ping-${localStorage.getItem('zyron-wisp-key') || 'main'}`);
+        }, 10000);
 
         function showBH() { document.getElementById('loading-screen').style.display = 'flex'; document.getElementById('loading-screen').style.opacity = '1'; }
         function hideBH() { document.getElementById('loading-screen').style.opacity = '0'; setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500); }
@@ -312,7 +326,7 @@
         function hideNavbar() { document.body.classList.add('nav-hidden'); hideSettings(); }
         function openAboutBlank() {
             const win = window.open('about:blank', '_blank');
-            if (!win) return alert('Popups blocked!');
+            if (!win) return;
             const doc = win.document;
             const iframe = doc.createElement('iframe');
             doc.title = 'Classes';
@@ -334,10 +348,10 @@
             initProxy();
             scramjet.init();
             createNewTab(); 
+            refreshAllPings(); 
             hideBH(); 
         };
         document.getElementById('bar').onkeydown = (e) => { if(e.key === 'Enter') nav(); };
     </script>
 </body>
 </html>
-
